@@ -1,6 +1,6 @@
 # include "iGraphics.h"
 
-int x = 300, y = 300, r = 20;
+int x=500, y = 300, r = 20;
 /*
 	function iDraw() is called again and again by the system.
 
@@ -9,14 +9,17 @@ int x = 300, y = 300, r = 20;
 void iDraw() {
 	//place your drawing codes here
 	iClear();
+    iLine(x,y,r+3,r+5);
+    iEllipse(30,56,32,13);
+    iFilledEllipse(23,4,2,23);
 	iSetColor(20, 200, 200);
 	iFilledCircle(x, y, r);
-	//iFilledRectangle(10, 30, 20, 20);
+	iFilledRectangle(10, 30, 20, 20);
 	iSetColor(20, 200, 0);
-	iText(40, 40, "Hi, I am iGraphics");
+	iText(40, 40, "Hi, I am Saklain");
 }
 
-/*
+/* 
 	function iMouseMove() is called when the user presses and drags the mouse.
 	(mx, my) is the position where the mouse pointer is.
 	*/
@@ -33,13 +36,13 @@ void iMouse(int button, int state, int mx, int my) {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
 		//place your codes here
 		//	printf("x = %d, y= %d\n",mx,my);
-		x += 10;
-		y += 10;
+		// x += 10;
+		// y += 10;
 	}
 	if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
 		//place your codes here
-		x -= 10;
-		y -= 10;
+		// x -= 10;
+		// y -= 10;
 	}
 }
 
@@ -74,6 +77,6 @@ void iSpecialKeyboard(unsigned char key) {
 
 int main() {
 	//place your own initialization codes here.
-	iInitialize(400, 400, "demo");
+	iInitialize(800, 1000, "demo");
 	return 0;
 }
