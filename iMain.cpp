@@ -1,4 +1,74 @@
-# include "iGraphics.h"
+#include "iGraphics.h"
+#include<time.h>
+#include<stdlib.h>
+#include<Windows.h>
+#define screenheight 1000
+#define screenwidth 1000
+#define mazepixel 40
+
+void setMazeAra();
+
+int brickNum;
+int mazeHeight = 840;
+int mazeWidth = 760;
+int mazeX = (screenwidth / 2) - (mazeWidth / 2)+3;
+int mazeY = (screenheight / 2) - (mazeHeight / 2)-5;
+int mazeLevel = 1;
+int mazeXcor[198];
+int mazeYcor[198];
+
+int maze[2][21][19] =
+{
+	{
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+		1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+		1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1,
+		1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+		1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1,
+		1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+		1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1,
+		0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0,
+		1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1,
+		0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+		1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1,
+		0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0,
+		1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1,
+		1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+		1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1,
+		1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+		1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1,
+		1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+		1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1,
+		1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	},
+	{
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1,
+		1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1,
+		1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1,
+		1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1,
+		1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1,
+		1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1,
+		1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1,
+		1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1,
+		0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0,
+		1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1,
+		1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1,
+		1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1,
+		1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+		1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1,
+		1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+		1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1,
+		1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+		1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1,
+		1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+	}
+};
+
+char BGImg[4][30] = {"assets\\BG2.bmp"};
+char mazeWall[2][30]={"assets\\tree.bmp"};
 
 int x=500, y = 300, r = 20;
 /*
@@ -9,15 +79,43 @@ int x=500, y = 300, r = 20;
 void iDraw() {
 	//place your drawing codes here
 	iClear();
-    iLine(x,y,r+3,r+5);
-    iEllipse(30,56,32,13);
-    iFilledEllipse(23,4,2,23);
-	iSetColor(20, 200, 200);
-	iFilledCircle(x, y, r);
-	iFilledRectangle(10, 30, 20, 20);
-	iSetColor(20, 200, 0);
-	iText(40, 40, "Hi, I am Saklain");
+	iShowBMP(0,0,BGImg[0]);
+	for (int i = 0; i <= brickNum; i++)
+		{
+			iShowBMP(mazeX + mazeXcor[i], mazeY + mazeYcor[i], mazeWall[0]);
+		}
+    // iLine(x,y,r+3,r+5);
+    // iEllipse(30,56,32,13);
+    // iFilledEllipse(23,4,2,23);
+	// iSetColor(20, 200, 200);
+	// iFilledCircle(x, y, r);
+	// iFilledRectangle(10, 30, 20, 20);
+	// iSetColor(20, 200, 0);
+	// iText(40, 40, "Hi, I am Saklain");
 }
+void setMazeAra() {
+	int i, c, p, j, t = 0, z;
+	brickNum = 0;
+	//foodNum = 0;
+    for (i = 20, c = 0, t = 0; i >= 0; i--) {
+        for (j = 0; j < 19; j++) {
+            if (maze[mazeLevel][i][j]) {
+                // If it's a wall
+                brickNum = c++;
+                mazeXcor[brickNum] = mazepixel * j;
+                mazeYcor[brickNum] = mazepixel * (20 - i);
+            // } else {
+            //     // If it's a path with a dot
+            //     foodNum = t++;
+            //     foodXcor[foodNum][0] = mazepixel * j;
+            //     foodYcor[foodNum] = mazepixel * (20 - i);
+            //     foodXcor[foodNum][1] = 0; // Dot exists initially
+            // }
+        }
+    }
+}
+}
+
 
 /* 
 	function iMouseMove() is called when the user presses and drags the mouse.
@@ -76,7 +174,8 @@ void iSpecialKeyboard(unsigned char key) {
 
 
 int main() {
+	setMazeAra();
 	//place your own initialization codes here.
-	iInitialize(800, 1000, "demo");
+	iInitialize(screenwidth, screenheight, "Dotly Hallows");
 	return 0;
 }

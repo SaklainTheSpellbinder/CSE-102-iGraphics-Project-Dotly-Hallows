@@ -6,11 +6,12 @@
 //
 //  Version: 2.0.2012.2015
 //
-
-# include <stdio.h>
-# include <stdlib.h>
+#include<bits/stdc++.h>
+#include<stdio.h>
+#include<stdlib.h>
 #pragma comment(lib, "glut32.lib")
 #pragma comment(lib, "glaux.lib")
+#include <GL/gl.h>
 #include "GL/glut.h"
 #include <time.h>
 #include <math.h>
