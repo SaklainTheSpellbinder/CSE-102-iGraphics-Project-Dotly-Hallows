@@ -2,20 +2,24 @@
 #include<time.h>
 #include<stdlib.h>
 #include<Windows.h>
-#define screenheight 1000
-#define screenwidth 1000
+#define screenheight 850
+#define screenwidth 800
 #define mazepixel 40
 
 void setMazeAra();
 
 int brickNum;
+int foodNum;
 int mazeHeight = 840;
 int mazeWidth = 760;
 int mazeX = (screenwidth / 2) - (mazeWidth / 2)+3;
 int mazeY = (screenheight / 2) - (mazeHeight / 2)-5;
 int mazeLevel = 1;
-int mazeXcor[198];
-int mazeYcor[198];
+int mazeXcor[200];
+int mazeYcor[200];
+int snitchXcor[210][2];
+int snitchYcor[210];
+int hocrux[210];
 
 int maze[2][21][19] =
 {
@@ -29,7 +33,7 @@ int maze[2][21][19] =
 		1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1,
 		0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0,
 		1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1,
-		0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+		1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1,
 		1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1,
 		0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0,
 		1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1,
@@ -52,7 +56,7 @@ int maze[2][21][19] =
 		1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1,
 		1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1,
 		1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1,
-		0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0,
+		1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1,
 		1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1,
 		1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1,
 		1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1,
@@ -69,6 +73,7 @@ int maze[2][21][19] =
 
 char BGImg[4][30] = {"assets\\BG2.bmp"};
 char mazeWall[2][30]={"assets\\tree.bmp"};
+char snitch[2][39]={"assets\\snitch4.bmp"};
 
 int x=500, y = 300, r = 20;
 /*
@@ -84,6 +89,30 @@ void iDraw() {
 		{
 			iShowBMP(mazeX + mazeXcor[i], mazeY + mazeYcor[i], mazeWall[0]);
 		}
+	iSetColor(255,255,255);
+	for (int i = 0; i <= foodNum; i++)
+		{
+			if (snitchXcor[i][1] != -1)
+			{
+				iShowBMP2(mazeX + snitchXcor[i][0], mazeY + snitchYcor[i],snitch[0],0 );
+				// if ((i == 41 || i == 55 || i == 179 || i == 184) && mazeLevel == 0)
+				// {
+				// 	iSetColor(50, 205, 50);
+				// 	iFilledCircle(mazeX + snitchXcor[i][0] + 20, mazeY + snitchYcor[i] + 20, 6);
+				// 	iSetColor(255, 255, 255);
+				// }
+				// else if ((i == 41 || i == 55 || i == 165 || i == 156) && mazeLevel == 1)
+				// {
+				// 	iSetColor(50, 205, 50);
+				// 	iFilledCircle(mazeX + foodXcor[i][0] + 20, mazeY + foodYcor[i] + 20, 6);
+				// 	iSetColor(255, 255, 255);
+				// }
+			}
+			// if (foodXcor[i][1] == -2)
+			// {
+			// 	iShowBMP2(mazeX + foodXcor[i][0], mazeY + foodYcor[i], fruit[randGen], 0);
+			// }
+		}
     // iLine(x,y,r+3,r+5);
     // iEllipse(30,56,32,13);
     // iFilledEllipse(23,4,2,23);
@@ -94,27 +123,32 @@ void iDraw() {
 	// iText(40, 40, "Hi, I am Saklain");
 }
 void setMazeAra() {
-	int i, c, p, j, t = 0, z;
+	int c=0, p, t = 0, z;
 	brickNum = 0;
 	//foodNum = 0;
-    for (i = 20, c = 0, t = 0; i >= 0; i--) {
-        for (j = 0; j < 19; j++) {
+    for (int i = 0; i <= 20; i++) {
+        for (int j = 0; j < 19; j++) {
             if (maze[mazeLevel][i][j]) {
-                // If it's a wall
                 brickNum = c++;
                 mazeXcor[brickNum] = mazepixel * j;
-                mazeYcor[brickNum] = mazepixel * (20 - i);
-            // } else {
-            //     // If it's a path with a dot
-            //     foodNum = t++;
-            //     foodXcor[foodNum][0] = mazepixel * j;
-            //     foodYcor[foodNum] = mazepixel * (20 - i);
-            //     foodXcor[foodNum][1] = 0; // Dot exists initially
-            // }
-        }
+                mazeYcor[brickNum] = mazepixel * (i);
+			}
+			else
+				{
+					foodNum = t++;
+					snitchXcor[foodNum][0] = mazepixel*j;
+					snitchYcor[foodNum] = mazepixel*(i);
+					snitchXcor[foodNum][1] = 0;
+				}
+			}
+	}
+		
+		for (int i = 0; i < 201; i++)
+		{
+			hocrux[i] = 0;
+		}
+        
     }
-}
-}
 
 
 /* 
