@@ -9,7 +9,7 @@
 void setMazeAra();
 
 int brickNum;
-int foodNum;
+int snitchesNum;
 int mazeHeight = 840;
 int mazeWidth = 760;
 int mazeX = (screenwidth / 2) - (mazeWidth / 2)+3;
@@ -20,6 +20,19 @@ int mazeYcor[200];
 int snitchXcor[210][2];
 int snitchYcor[210];
 int hocrux[210];
+int cellX;
+int cellY;
+
+typedef struct{
+	int upInd, downInd, leftInd, rightInd;
+	int x;
+	int y;
+	bool upCount, downCount, leftCount, rightCount;
+	bool trigRight, trigLeft, trigUp, trigDown;
+	int right, left, up, down;
+}move;
+
+move harry;
 
 int maze[2][21][19] =
 {
@@ -90,7 +103,7 @@ void iDraw() {
 			iShowBMP(mazeX + mazeXcor[i], mazeY + mazeYcor[i], mazeWall[0]);
 		}
 	iSetColor(255,255,255);
-	for (int i = 0; i <= foodNum; i++)
+	for (int i = 0; i <= snitchesNum; i++)
 		{
 			if (snitchXcor[i][1] != -1)
 			{
@@ -105,11 +118,8 @@ void iDraw() {
 				else
 					iShowBMP2(mazeX + snitchXcor[i][0], mazeY + snitchYcor[i],snitch[0],0 );
 			}
-			// if (foodXcor[i][1] == -2)
-			// {
-			// 	iShowBMP2(mazeX + foodXcor[i][0], mazeY + foodYcor[i], fruit[randGen], 0);
-			// }
 		}
+		
     // iLine(x,y,r+3,r+5);
     // iEllipse(30,56,32,13);
     // iFilledEllipse(23,4,2,23);
@@ -132,10 +142,10 @@ void setMazeAra() {
 			}
 			else
 				{
-					foodNum = t++;
-					snitchXcor[foodNum][0] = mazepixel*j;
-					snitchYcor[foodNum] = mazepixel*(i);
-					snitchXcor[foodNum][1] = 0;
+					snitchesNum = t++;
+					snitchXcor[snitchesNum][0] = mazepixel*j;
+					snitchYcor[snitchesNum] = mazepixel*i;
+					snitchXcor[snitchesNum][1] = 0;
 				}
 			}
 	}
