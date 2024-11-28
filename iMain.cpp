@@ -73,7 +73,7 @@ int maze[2][21][19] =
 
 char BGImg[4][30] = {"assets\\BG2.bmp"};
 char mazeWall[2][30]={"assets\\tree.bmp"};
-char snitch[2][39]={"assets\\snitch4.bmp"};
+char snitch[2][39]={"assets\\snitch4.bmp","assets\\Sortinghat2.bmp"};
 
 int x=500, y = 300, r = 20;
 /*
@@ -94,19 +94,16 @@ void iDraw() {
 		{
 			if (snitchXcor[i][1] != -1)
 			{
-				iShowBMP2(mazeX + snitchXcor[i][0], mazeY + snitchYcor[i],snitch[0],0 );
-				// if ((i == 41 || i == 55 || i == 179 || i == 184) && mazeLevel == 0)
-				// {
-				// 	iSetColor(50, 205, 50);
-				// 	iFilledCircle(mazeX + snitchXcor[i][0] + 20, mazeY + snitchYcor[i] + 20, 6);
-				// 	iSetColor(255, 255, 255);
-				// }
-				// else if ((i == 41 || i == 55 || i == 165 || i == 156) && mazeLevel == 1)
-				// {
-				// 	iSetColor(50, 205, 50);
-				// 	iFilledCircle(mazeX + foodXcor[i][0] + 20, mazeY + foodYcor[i] + 20, 6);
-				// 	iSetColor(255, 255, 255);
-				// }
+				if ((i == 41 || i == 55 || i == 179 || i == 184) && mazeLevel == 0)
+				{
+					iShowBMP2(mazeX + snitchXcor[i][0], mazeY + snitchYcor[i],snitch[1],0 );
+				}
+				else if ((i == 41 || i == 55 || i == 165 || i == 156) && mazeLevel == 1)
+				{
+					iShowBMP2(mazeX + snitchXcor[i][0], mazeY + snitchYcor[i],snitch[1],0 );
+				}
+				else
+					iShowBMP2(mazeX + snitchXcor[i][0], mazeY + snitchYcor[i],snitch[0],0 );
 			}
 			// if (foodXcor[i][1] == -2)
 			// {
