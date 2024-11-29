@@ -126,15 +126,15 @@ void iDraw() {
 			}
 		}
 	if (harry.rightCount)
-				iShowBMP2(harry.x, harry.y, harryright[harry.rightInd], 9283431);
+				iShowBMP2(harry.x, harry.y, harryright[harry.rightInd], 16711680);
 			else if (harry.leftCount)
-				iShowBMP2(harry.x, harry.y, harryleft[harry.leftInd], 9283431);
+				iShowBMP2(harry.x, harry.y, harryleft[harry.leftInd], 16711680);
 			else if (harry.upCount)
-				iShowBMP2(harry.x, harry.y, harryup[harry.upInd], 9283431);
+				iShowBMP2(harry.x, harry.y, harryup[harry.upInd], 16711680);
 			else if (harry.downCount)
-				iShowBMP2(harry.x, harry.y, harrydown[harry.downInd], 9283431);
+				iShowBMP2(harry.x, harry.y, harrydown[harry.downInd], 16711680);
 			else
-				iShowBMP2(harry.x, harry.y, harryright[harry.rightInd], 9283431);
+				iShowBMP2(harry.x, harry.y, harryright[harry.rightInd], 16711680);
 		
     // iLine(x,y,r+3,r+5);
     // iEllipse(30,56,32,13);
