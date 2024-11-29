@@ -5,7 +5,7 @@
 #include<Windows.h>
 #define screenheight 850
 #define screenwidth 800
-#define mazepixel 40
+#define mazepixel 40// all of the sprites...harry demnetors....snitches eveerything is 40*40
 
 void setMazeAra();
 
@@ -23,7 +23,9 @@ int snitchYcor[210];
 int hocrux[210];
 int cellX;
 int cellY;
+int harrytime=10;
 int harryspeed=5;
+int harryNow[2]={19,9};
 
 typedef struct {
     int upInd, downInd, leftInd, rightInd;
@@ -126,15 +128,15 @@ void iDraw() {
 			}
 		}
 	if (harry.rightCount)
-				iShowBMP2(harry.x, harry.y, harryright[harry.rightInd], 16711680);
+				iShowBMP2(harry.x, harry.y, harryright[harry.rightInd], 9283431);
 			else if (harry.leftCount)
-				iShowBMP2(harry.x, harry.y, harryleft[harry.leftInd], 16711680);
+				iShowBMP2(harry.x, harry.y, harryleft[harry.leftInd], 9283431);
 			else if (harry.upCount)
-				iShowBMP2(harry.x, harry.y, harryup[harry.upInd], 16711680);
+				iShowBMP2(harry.x, harry.y, harryup[harry.upInd], 9283431);
 			else if (harry.downCount)
-				iShowBMP2(harry.x, harry.y, harrydown[harry.downInd], 16711680);
+				iShowBMP2(harry.x, harry.y, harrydown[harry.downInd], 9283431);
 			else
-				iShowBMP2(harry.x, harry.y, harryright[harry.rightInd], 16711680);
+				iShowBMP2(harry.x, harry.y, harryright[harry.rightInd], 9283431);
 		
     // iLine(x,y,r+3,r+5);
     // iEllipse(30,56,32,13);
@@ -151,10 +153,10 @@ void setMazeAra() {
 	//foodNum = 0;
     for (int i = 0; i <= 20; i++) {
         for (int j = 0; j < 19; j++) {
-            if (maze[mazeLevel][i][j]) {
+            if (maze[mazeLevel][i][j]==1) {
                 brickNum = c++;
                 mazeXcor[brickNum] = mazepixel * j;
-                mazeYcor[brickNum] = mazepixel * (i);
+                mazeYcor[brickNum] = mazepixel * i;
 			}
 			else
 				{
@@ -172,9 +174,8 @@ void setMazeAra() {
 		}
 	cellX = 9;
 	cellY = 19;
-	harry.x = mazeX + (cellX)*mazepixel;
-	harry.y = mazeY + (20 - cellY)*mazepixel;
-
+	harry.x = mazeX + cellX*mazepixel;
+	harry.y = mazeY + (20-cellY)*mazepixel;
 	harry.downCount=false;
 	harry.rightCount=false;
 	harry.upCount=false;
@@ -232,15 +233,213 @@ void iKeyboard(unsigned char key) {
 	*/
 void iSpecialKeyboard(unsigned char key) {
 
+	if(key==GLUT_KEY_RIGHT){
+		if (!(harry.x % mazepixel) && !(harry.y % mazepixel))
+			{
+				harry.downCount = false;
+				harry.upCount = false;
+				harry.leftCount = false;
+				harry.rightCount = true;
+			}
+			else
+			{
+				harry.trigRight = true;
+				harry.trigLeft = false;
+				harry.trigDown = false;
+				harry.trigUp = false;
+			}
+	}
+	if(key==GLUT_KEY_LEFT){
+		if (!(harry.x % mazepixel) && !(harry.y % mazepixel))
+			{
+				harry.downCount = false;
+				harry.rightCount = false;
+				harry.upCount = false;
+				harry.leftCount = true;
+			}
+			else
+			{
+				harry.trigRight = false;
+				harry.trigLeft = true;
+				harry.trigDown = false;
+				harry.trigUp = false;
+			}
+	}
+
+	if(key==GLUT_KEY_UP){
+		if (!(harry.y % mazepixel) && !(harry.x % mazepixel))
+			{
+				harry.downCount = false;
+				harry.rightCount = false;
+				harry.leftCount = false;
+				harry.upCount = true;
+			}
+			else
+			{
+				harry.trigRight = false;
+				harry.trigLeft = false;
+				harry.trigDown = false;
+				harry.trigUp = true;
+			}
+	}
+
+	if(key==GLUT_KEY_DOWN){
+		if (!(harry.y % mazepixel) && !(harry.x % mazepixel))
+			{
+				harry.rightCount = false;
+				harry.leftCount = false;
+				harry.upCount = false;
+				harry.downCount = true;
+			}
+			else
+			{
+				harry.trigRight = false;
+				harry.trigLeft = false;
+				harry.trigDown = true;
+				harry.trigUp = false;
+			}
+	}
+	else
+		{
+			harry.rightCount=false;
+			harry.leftCount=false;
+			harry.downCount=false;
+			harry.upCount=false;
+		}
+
 	if (key == GLUT_KEY_END) {
 		exit(0);
 	}
 	//place your codes for other keys here
 }
 
+void harrymove()
+{
+	if (harry.rightCount)
+	{
+		harry.right++;
+		if (!maze[mazeLevel][cellY][cellX + 1])
+		{
+			harry.x += harryspeed;
+			if (!(harry.right % 2))
+				harry.rightInd++;
+
+			if (!(harry.x % mazepixel))
+				cellX++;
+
+		}
+		if (harry.rightInd > 7) harry.rightInd = 0;
+
+	}
+	else if (harry.leftCount)
+	{
+		harry.left++;
+		if (!maze[mazeLevel][cellY][cellX - 1])
+		{
+			harry.x -= harryspeed;
+			if (!(harry.left % 2))
+				harry.leftInd++;
+
+			if (!(harry.x % mazepixel))
+				cellX--;
+
+		}
+
+		if (harry.leftInd > 1) harry.leftInd = 0;
+	}
+	else if (harry.upCount)
+	{
+		harry.up++;
+		if (!maze[mazeLevel][cellY - 1][cellX])
+		{
+			harry.y += harryspeed;
+			if (!(harry.up % 2))
+				harry.upInd++;
+
+			if (!(harry.y % mazepixel))
+				cellY--;
+		}
+		if (harry.upInd > 5) harry.upInd = 0;
+	}
+	else if (harry.downCount)
+	{
+		harry.down++;
+		if (!maze[mazeLevel][cellY + 1][cellX])
+		{
+			harry.y -= harryspeed;
+			if (!(harry.down % 2))
+				harry.downInd++;
+
+			if (!(harry.y % mazepixel))
+				cellY++;
+		}
+		if (harry.downInd > 5) harry.downInd = 0;
+	}
+}
+
+void Harrymove(){
+	if(harry.rightCount){
+		//harry.x+=harryspeed;
+		harry.rightInd++;
+	}
+	else if(harry.leftCount){
+		//harry.x-=harryspeed;
+		harry.leftInd++;
+	}
+	else if(harry.upCount){
+		//harry.y+=harryspeed;
+		harry.upInd++;
+	}
+	else if(harry.downCount){
+		//harry.y-=harryspeed;
+		harry.downInd++;
+	}
+	else{
+		//harry.rightCount=true;
+		harry.rightInd=0;
+	}
+}
+
+void checkTrigger(){
+	if (harry.trigRight && !(harry.x % mazepixel) && !(harry.y % mazepixel) && !maze[mazeLevel][cellY][cellX + 1])
+	{
+		harry.downCount = false;
+		harry.upCount = false;
+		harry.leftCount = false;
+		harry.rightCount = true;
+		harry.trigRight = false;
+	}
+	else if (harry.trigLeft && !(harry.x % mazepixel) && !(harry.y % mazepixel) && !maze[mazeLevel][cellY][cellX - 1])
+	{
+		harry.downCount = false;
+		harry.rightCount = false;
+		harry.upCount = false;
+		harry.leftCount = true;
+		harry.trigLeft = false;
+	}
+	else if (harry.trigUp && !(harry.x % mazepixel) && !(harry.y % mazepixel) && !maze[mazeLevel][cellY - 1][cellX])
+	{
+		harry.downCount = false;
+		harry.rightCount = false;
+		harry.leftCount = false;
+		harry.upCount = true;
+		harry.trigUp = false;
+	}
+	else if (harry.trigDown && !(harry.x % mazepixel) && !(harry.y % mazepixel) && !maze[mazeLevel][cellY + 1][cellX])
+	{
+		harry.rightCount = false;
+		harry.leftCount = false;
+		harry.upCount = false;
+		harry.downCount = true;
+		harry.trigDown = false;
+	}
+
+}
 
 int main() {
 	setMazeAra();
+	iSetTimer(10, checkTrigger);
+	iSetTimer(harrytime,harrymove);
 	//place your own initialization codes here.
 	iInitialize(screenwidth, screenheight, "Dotly Hallows");
 	return 0;
