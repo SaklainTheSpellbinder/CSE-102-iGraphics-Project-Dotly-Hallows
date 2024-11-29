@@ -1,6 +1,7 @@
 #include "iGraphics.h"
 #include<time.h>
 #include<stdlib.h>
+#include<stdbool.h>
 #include<Windows.h>
 #define screenheight 850
 #define screenwidth 800
@@ -22,17 +23,19 @@ int snitchYcor[210];
 int hocrux[210];
 int cellX;
 int cellY;
+int harryspeed=5;
 
-typedef struct{
-	int upInd, downInd, leftInd, rightInd;
-	int x;
-	int y;
-	bool upCount, downCount, leftCount, rightCount;
-	bool trigRight, trigLeft, trigUp, trigDown;
-	int right, left, up, down;
-}move;
+typedef struct {
+    int upInd, downInd, leftInd, rightInd;
+    int x;
+    int y;
+    bool upCount, downCount, leftCount, rightCount;
+    bool trigRight, trigLeft, trigUp, trigDown;
+    int right, left, up, down;
+} move;
 
 move harry;
+
 
 int maze[2][21][19] =
 {
@@ -87,7 +90,10 @@ int maze[2][21][19] =
 char BGImg[4][30] = {"assets\\BG2.bmp"};
 char mazeWall[2][30]={"assets\\tree.bmp"};
 char snitch[2][39]={"assets\\snitch4.bmp","assets\\Sortinghat2.bmp"};
-
+char harrydown[9][100]={"assets\\harry\\tile001.bmp","assets\\harry\\tile002.bmp","assets\\harry\\tile003.bmp","assets\\harry\\tile004.bmp","assets\\harry\\tile005.bmp","assets\\harry\\tile006.bmp","assets\\harry\\tile007.bmp","assets\\harry\\tile008.bmp"};
+char harryup[9][100]={"assets\\harry\\tile009.bmp","assets\\harry\\tile010.bmp","assets\\harry\\tile011.bmp","assets\\harry\\tile012.bmp","assets\\harry\\tile013.bmp","assets\\harry\\tile014.bmp","assets\\harry\\tile009.bmp","assets\\harry\\tile010.bmp"};
+char harryright[9][100]={"assets\\harry\\tile027.bmp","assets\\harry\\tile028.bmp","assets\\harry\\tile029.bmp","assets\\harry\\tile030.bmp","assets\\harry\\tile031.bmp","assets\\harry\\tile033.bmp","assets\\harry\\tile034.bmp","assets\\harry\\tile035.bmp"};
+char harryleft[9][100]={"assets\\harry\\tile018.bmp","assets\\harry\\tile019.bmp","assets\\harry\\tile020.bmp","assets\\harry\\tile021.bmp","assets\\harry\\tile022.bmp","assets\\harry\\tile023.bmp","assets\\harry\\tile024.bmp","assets\\harry\\tile025.bmp"};
 int x=500, y = 300, r = 20;
 /*
 	function iDraw() is called again and again by the system.
@@ -119,6 +125,16 @@ void iDraw() {
 					iShowBMP2(mazeX + snitchXcor[i][0], mazeY + snitchYcor[i],snitch[0],0 );
 			}
 		}
+	if (harry.rightCount)
+				iShowBMP2(harry.x, harry.y, harryright[harry.rightInd], 9283431);
+			else if (harry.leftCount)
+				iShowBMP2(harry.x, harry.y, harryleft[harry.leftInd], 9283431);
+			else if (harry.upCount)
+				iShowBMP2(harry.x, harry.y, harryup[harry.upInd], 9283431);
+			else if (harry.downCount)
+				iShowBMP2(harry.x, harry.y, harrydown[harry.downInd], 9283431);
+			else
+				iShowBMP2(harry.x, harry.y, harryright[harry.rightInd], 9283431);
 		
     // iLine(x,y,r+3,r+5);
     // iEllipse(30,56,32,13);
@@ -154,6 +170,15 @@ void setMazeAra() {
 		{
 			hocrux[i] = 0;
 		}
+	cellX = 9;
+	cellY = 19;
+	harry.x = mazeX + (cellX)*mazepixel;
+	harry.y = mazeY + (20 - cellY)*mazepixel;
+
+	harry.downCount=false;
+	harry.rightCount=false;
+	harry.upCount=false;
+	harry.leftCount=false;
         
     }
 
