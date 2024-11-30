@@ -377,28 +377,28 @@ void harrymove()
 	}
 }
 
-void Harrymove(){
-	if(harry.rightCount){
-		//harry.x+=harryspeed;
-		harry.rightInd++;
-	}
-	else if(harry.leftCount){
-		//harry.x-=harryspeed;
-		harry.leftInd++;
-	}
-	else if(harry.upCount){
-		//harry.y+=harryspeed;
-		harry.upInd++;
-	}
-	else if(harry.downCount){
-		//harry.y-=harryspeed;
-		harry.downInd++;
-	}
-	else{
-		//harry.rightCount=true;
-		harry.rightInd=0;
-	}
-}
+// void Harrymove(){
+// 	if(harry.rightCount){
+// 		//harry.x+=harryspeed;
+// 		harry.rightInd++;
+// 	}
+// 	else if(harry.leftCount){
+// 		//harry.x-=harryspeed;
+// 		harry.leftInd++;
+// 	}
+// 	else if(harry.upCount){
+// 		//harry.y+=harryspeed;
+// 		harry.upInd++;
+// 	}
+// 	else if(harry.downCount){
+// 		//harry.y-=harryspeed;
+// 		harry.downInd++;
+// 	}
+// 	else{
+// 		//harry.rightCount=true;
+// 		harry.rightInd=0;
+// 	}
+// }
 
 void checkTrigger(){
 	if (harry.trigRight && !(harry.x % mazepixel) && !(harry.y % mazepixel) && !maze[mazeLevel][cellY][cellX + 1])
