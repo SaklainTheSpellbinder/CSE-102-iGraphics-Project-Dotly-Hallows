@@ -11,8 +11,9 @@ void drawmaze();
 void Harrymove();
 void newgame(int level);
 void checkTrigger();
-void ghostinitial();
+void dementorinitial();
 void harryinitial();
+int dementortime=100;
 int brickNum;
 int snitchesNum;
 int mazeHeight = 840;
@@ -97,10 +98,6 @@ int maze[3][21][19] =
 
     }
 };
-
-int snitcharray[2][21][19];
-
-
 
 char BGImg[4][30] = {"assets\\BG2.bmp"};
 char mazeWall[2][30]={"assets\\tree.bmp"};
@@ -478,6 +475,10 @@ void iSpecialKeyboard(unsigned char key) {
 // 		if (harry.downInd > 5) harry.downInd = 0;
 // 	}
 // }
+
+void dementorinitial(){
+	
+}
 
 void Harrymove(){
 	if(harry.rightCount){
