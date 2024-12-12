@@ -11,6 +11,8 @@ void drawmaze();
 void Harrymove();
 void newgame(int level);
 void checkTrigger();
+void ghostinitial();
+void harryinitial();
 int brickNum;
 int snitchesNum;
 int mazeHeight = 840;
@@ -28,6 +30,7 @@ int cellY;
 int harryNow[2]={19,9};
 int snitchCollected=0;
 char score[1000];
+int point=0;
 
 typedef struct {
     int upInd, downInd, leftInd, rightInd;
@@ -45,48 +48,48 @@ int maze[3][21][19] =
 {
 	{
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-		1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1,
+		1, 2, 2, 3, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1,
 		1, 2, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 2, 1,
-		1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
+		1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 2, 2, 1,
 		1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1,
 		1, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 1,
-		1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1,
+		1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 3, 1, 1, 1, 2, 1, 1, 1, 1,
 		0, 0, 0, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 0, 0, 0,
 		1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1,
 		1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1,
 		1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1,
-		0, 0, 0, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 0, 0, 0,
+		0, 0, 0, 1, 2, 1, 2, 2, 2, 2, 3, 2, 2, 1, 2, 1, 0, 0, 0,
 		1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1,
 		1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1,
 		1, 2, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 2, 1, 2, 1, 1, 2, 1,
 		1, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 1,
-		1, 1, 2, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 1, 1,
-		1, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 1,
+		1, 1, 3, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 1, 1,
+		1, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 3, 2, 2, 1,
 		1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1,
 		1, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 1,
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 	},
 	{
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-		1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1,
+		1, 2, 3, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 3, 1,
 		1, 2, 1, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 1, 2, 1,
 		1, 2, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1, 2, 1,
 		1, 2, 2, 2, 1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 1, 2, 2, 2, 1,
-		1, 1, 1, 1, 1, 2, 2, 2, 2, 1, 2, 2, 2, 2, 1, 1, 1, 1, 1,
+		1, 1, 1, 1, 1, 2, 2, 2, 2, 1, 3, 2, 2, 2, 1, 1, 1, 1, 1,
 		1, 2, 2, 2, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 2, 2, 1,
 		1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1,
 		1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 1,
-		1, 2, 2, 2, 2, 1, 2, 1, 2, 2, 2, 1, 2, 1, 2, 2, 2, 2, 1,
-		1, 2, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 2, 1,
+		1, 2, 2, 2, 2, 1, 2, 1, 2, 3, 2, 1, 2, 1, 2, 2, 2, 2, 1,
+		1, 2, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 3, 1, 2, 1,
 		1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1,
 		1, 2, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 2, 1,
 		1, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 1,
 		1, 1, 2, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 1, 1,
-		1, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 1,
+		1, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 1, 2, 2, 1,
 		1, 2, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 2, 1,
-		1, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 1,
+		1, 2, 3, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 1,
 		1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1,
-		1, 2, 2, 2, 2, 1, 2, 2, 2, 0, 2, 2, 2, 1, 2, 2, 2, 2, 1,
+		1, 2, 2, 2, 2, 1, 2, 2, 2, 0, 2, 2, 2, 1, 2, 2, 2, 3, 1,
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 	}
     ,
@@ -120,7 +123,7 @@ void iDraw() {
 	drawmaze();
 
 	iText(590, 815, "SCORE: ",GLUT_BITMAP_HELVETICA_18);
-	sprintf(score,"%d",snitchCollected);
+	sprintf(score,"%d",point);
 	iText(662, 815, score,GLUT_BITMAP_HELVETICA_18);
 	// for (int i = 0; i <= brickNum; i++)
 	// 	{
@@ -262,6 +265,14 @@ void iDraw() {
 					snitchYcor[snitchesNum] = mazepixel*(20-i);
 					snitchXcor[snitchesNum][1] = 0;
 					iShowBMP2(mazeX + snitchXcor[snitchesNum][0], mazeY + snitchYcor[snitchesNum],snitch[0],0 );
+				}
+			else if(maze[mazeLevel][i][j]==3)
+				{
+					snitchesNum=t++;
+					snitchXcor[snitchesNum][0] = mazepixel*j;
+					snitchYcor[snitchesNum] = mazepixel*(20-i);
+					snitchXcor[snitchesNum][1] = 0;
+					iShowBMP2(mazeX + snitchXcor[snitchesNum][0], mazeY + snitchYcor[snitchesNum],snitch[1],0 );
 				}
 		}
 	}
@@ -474,6 +485,12 @@ void Harrymove(){
         harryNow[1]++;
 		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==2){
 			snitchCollected++;
+			point++;
+			maze[mazeLevel][harryNow[0]][harryNow[1]]=0;
+		}
+		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==3){
+			snitchCollected++;
+			point+=5;
 			maze[mazeLevel][harryNow[0]][harryNow[1]]=0;
 		}
 		harry.rightInd++;
@@ -485,6 +502,12 @@ void Harrymove(){
         harryNow[1]--;
 		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==2){
 			snitchCollected++;
+			point++;
+			maze[mazeLevel][harryNow[0]][harryNow[1]]=0;
+		}
+		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==3){
+			snitchCollected++;
+			point+=5;
 			maze[mazeLevel][harryNow[0]][harryNow[1]]=0;
 		}
 		harry.leftInd++;
@@ -496,6 +519,12 @@ void Harrymove(){
         harryNow[0]--;
 		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==2){
 			snitchCollected++;
+			point++;
+			maze[mazeLevel][harryNow[0]][harryNow[1]]=0;
+		}
+		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==3){
+			snitchCollected++;
+			point+=5;
 			maze[mazeLevel][harryNow[0]][harryNow[1]]=0;
 		}
 		harry.upInd++;
@@ -507,6 +536,12 @@ void Harrymove(){
         harryNow[0]++;
 		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==2){
 			snitchCollected++;
+			point++;
+			maze[mazeLevel][harryNow[0]][harryNow[1]]=0;
+		}
+		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==3){
+			snitchCollected++;
+			point+=5;
 			maze[mazeLevel][harryNow[0]][harryNow[1]]=0;
 		}
 		harry.downInd++;
