@@ -269,6 +269,7 @@ void iSpecialKeyboard(unsigned char key) {
 				harry.upCount = false;
 				harry.leftCount = false;
 				harry.rightCount = true;
+				printf("%d %d\n",harryNow[0],harryNow[1]);
                 harry.lastcount=0;
 			}
 			else
@@ -286,6 +287,7 @@ void iSpecialKeyboard(unsigned char key) {
 				harry.upCount = false;
 				harry.leftCount = true;
 				harry.rightCount = false;
+				printf("%d %d\n",harryNow[0],harryNow[1]);
                 harry.lastcount=1;
 			}
 			else
@@ -304,7 +306,7 @@ void iSpecialKeyboard(unsigned char key) {
 				harry.upCount = true;
 				harry.leftCount = false;
 				harry.rightCount = false;
-                printf("%d %d",harryNow[0],harryNow[1]);
+                printf("%d %d\n",harryNow[0],harryNow[1]);
                 harry.lastcount=2;
 			}
 			else
@@ -323,6 +325,7 @@ void iSpecialKeyboard(unsigned char key) {
 				harry.upCount = false;
 				harry.leftCount = false;
 				harry.rightCount = false;
+				printf("%d %d\n",harryNow[0],harryNow[1]);
                 harry.lastcount=3;
 			}
 			else

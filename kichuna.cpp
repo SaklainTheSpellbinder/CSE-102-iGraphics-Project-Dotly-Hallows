@@ -7,8 +7,9 @@
 #define screenwidth 800
 #define mazepixel 40// all of the sprites...harry demnetors....snitches eveerything is 40*40
 
-void setMazeAra();
+void drawmaze();
 void Harrymove();
+void newgame(int level);
 void checkTrigger();
 int brickNum;
 int snitchesNum;
@@ -16,7 +17,7 @@ int mazeHeight = 840;
 int mazeWidth = 760;
 int mazeX = (screenwidth / 2) - (mazeWidth / 2)+3;
 int mazeY = (screenheight / 2) - (mazeHeight / 2)-5;
-int mazeLevel = 1;
+int mazeLevel = 0;
 int mazeXcor[200];
 int mazeYcor[200];
 int snitchXcor[210][2];
@@ -24,9 +25,9 @@ int snitchYcor[210];
 int hocrux[210];
 int cellX;
 int cellY;
-int harrytime=10;
-int harryspeed=5;
 int harryNow[2]={19,9};
+int snitchCollected=0;
+char score[1000];
 
 typedef struct {
     int upInd, downInd, leftInd, rightInd;
@@ -50,11 +51,11 @@ int maze[3][21][19] =
 		1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1,
 		1, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 1,
 		1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1,
-		2, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 2, 2, 2,
+		0, 0, 0, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 0, 0, 0,
 		1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1,
 		1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1,
 		1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1,
-		2, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 2, 2, 2,
+		0, 0, 0, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 0, 0, 0,
 		1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1,
 		1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1,
 		1, 2, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 2, 1, 2, 1, 1, 2, 1,
@@ -62,7 +63,7 @@ int maze[3][21][19] =
 		1, 1, 2, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 1, 1,
 		1, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 1,
 		1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1,
-		1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
+		1, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 1,
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 	},
 	{
@@ -85,7 +86,7 @@ int maze[3][21][19] =
 		1, 2, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 2, 1,
 		1, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 1,
 		1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1,
-		1, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 1,
+		1, 2, 2, 2, 2, 1, 2, 2, 2, 0, 2, 2, 2, 1, 2, 2, 2, 2, 1,
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 	}
     ,
@@ -116,27 +117,32 @@ void iDraw() {
 	//place your drawing codes here
 	iClear();
 	iShowBMP(0,0,BGImg[0]);
-	for (int i = 0; i <= brickNum; i++)
-		{
-			iShowBMP(mazeX + mazeXcor[i], mazeY + mazeYcor[i], mazeWall[0]);
-		}
-	iSetColor(255,255,255);
-	for (int i = 0; i <= snitchesNum; i++)
-		{
-			if (snitchXcor[i][1] != -1)
-			{
-				if ((i == 41 || i == 55 || i == 179 || i == 184) && mazeLevel == 0)
-				{
-					iShowBMP2(mazeX + snitchXcor[i][0], mazeY + snitchYcor[i],snitch[1],0 );
-				}
-				else if ((i == 41 || i == 55 || i == 165 || i == 156) && mazeLevel == 1)
-				{
-					iShowBMP2(mazeX + snitchXcor[i][0], mazeY + snitchYcor[i],snitch[1],0 );
-				}
-				else
-					iShowBMP2(mazeX + snitchXcor[i][0], mazeY + snitchYcor[i],snitch[0],0 );
-			}
-		}
+	drawmaze();
+
+	iText(590, 815, "SCORE: ",GLUT_BITMAP_HELVETICA_18);
+	sprintf(score,"%d",snitchCollected);
+	iText(662, 815, score,GLUT_BITMAP_HELVETICA_18);
+	// for (int i = 0; i <= brickNum; i++)
+	// 	{
+	// 		iShowBMP(mazeX + mazeXcor[i], mazeY + mazeYcor[i], mazeWall[0]);
+	// 	}
+	// iSetColor(255,255,255);
+	// for (int i = 0; i <= snitchesNum; i++)
+	// 	{
+	// 		if (snitchXcor[i][1] != -1)
+	// 		{
+	// 			if ((i == 41 || i == 55 || i == 179 || i == 184) && mazeLevel == 0)
+	// 			{
+	// 				iShowBMP2(mazeX + snitchXcor[i][0], mazeY + snitchYcor[i],snitch[1],0 );
+	// 			}
+	// 			else if ((i == 41 || i == 55 || i == 165 || i == 156) && mazeLevel == 1)
+	// 			{
+	// 				iShowBMP2(mazeX + snitchXcor[i][0], mazeY + snitchYcor[i],snitch[1],0 );
+	// 			}
+	// 			else
+	// 				iShowBMP2(mazeX + snitchXcor[i][0], mazeY + snitchYcor[i],snitch[0],0 );
+	// 		}
+	// 	}
 	        if (harry.rightCount){
                 Harrymove();
 				iShowBMP2(harry.x, harry.y, harryright[harry.rightInd], 9283431);
@@ -175,43 +181,95 @@ void iDraw() {
 	// iSetColor(20, 200, 0);
 	// iText(40, 40, "Hi, I am Saklain");
 
-void setMazeAra() {
-	int c=0, p, t = 0, z;
-	brickNum = 0;
-	snitchesNum=0;
+// void setMazeAra() {
+// 	int c=0, p, t = 0, z;
+// 	brickNum = 0;
+// 	snitchesNum=0;
+//     for (int i = 20; i >= 0; i--) {
+//         for (int j = 0; j < 19; j++) {
+//             if (maze[mazeLevel][i][j]==1) {
+//                 brickNum = c++;
+//                 mazeXcor[brickNum] = mazepixel * j;
+//                 mazeYcor[brickNum] = mazepixel * (20-i);
+// 			}
+// 			else
+// 				{
+// 					snitchesNum = t++;
+// 					snitchXcor[snitchesNum][0] = mazepixel*j;
+// 					snitchYcor[snitchesNum] = mazepixel*(20-i);
+// 					snitchXcor[snitchesNum][1] = 0;
+// 				}
+// 		}
+// 	}
+		
+// 		for (int i = 0; i < 201; i++)
+// 		{
+// 			hocrux[i] = 0;
+// 		}
+// 	cellX = 9;
+// 	cellY = 19;
+// 	harry.x = mazeX + cellX*mazepixel;
+// 	harry.y = mazeY + (20-cellY)*mazepixel;
+// 	harry.downCount=false;
+// 	harry.rightCount=false;
+// 	harry.upCount=false;
+// 	harry.leftCount=false;
+//     harry.rightInd=0;
+//     harry.leftInd=0;
+//     harry.upInd=0;
+//     harry.downInd=0;
+        
+//     }
+
+	void harryinitial(){
+		cellX = 9;
+		cellY = 19;
+		harry.x = mazeX + cellX*mazepixel;
+		harry.y = mazeY + (20-cellY)*mazepixel;
+		harry.downCount=false;
+		harry.rightCount=false;
+		harry.upCount=false;
+		harry.leftCount=false;
+		harry.rightInd=0;
+		harry.leftInd=0;
+		harry.upInd=0;
+		harry.downInd=0;
+	}
+
+	void drawmaze() {
+		int c=0, p, t = 0, z;
+			brickNum = 0;
+			snitchesNum=0;
+			if(snitchCollected==187 && mazeLevel==0){
+				harryinitial();
+				harryNow[0]=19;
+				harryNow[1]=9;
+				mazeLevel=1;
+				//newgame(mazeLevel);
+			}
     for (int i = 20; i >= 0; i--) {
         for (int j = 0; j < 19; j++) {
             if (maze[mazeLevel][i][j]==1) {
-                brickNum = c++;
+				brickNum=c++;
                 mazeXcor[brickNum] = mazepixel * j;
                 mazeYcor[brickNum] = mazepixel * (20-i);
+				iShowBMP(mazeX + mazeXcor[brickNum], mazeY + mazeYcor[brickNum], mazeWall[0]);
 			}
-			else
+			else if(maze[mazeLevel][i][j]==2)
 				{
-					snitchesNum = t++;
+					snitchesNum=t++;
 					snitchXcor[snitchesNum][0] = mazepixel*j;
 					snitchYcor[snitchesNum] = mazepixel*(20-i);
 					snitchXcor[snitchesNum][1] = 0;
+					iShowBMP2(mazeX + snitchXcor[snitchesNum][0], mazeY + snitchYcor[snitchesNum],snitch[0],0 );
 				}
 		}
 	}
 		
-		for (int i = 0; i < 201; i++)
-		{
-			hocrux[i] = 0;
-		}
-	cellX = 9;
-	cellY = 19;
-	harry.x = mazeX + cellX*mazepixel;
-	harry.y = mazeY + (20-cellY)*mazepixel;
-	harry.downCount=false;
-	harry.rightCount=false;
-	harry.upCount=false;
-	harry.leftCount=false;
-    harry.rightInd=0;
-    harry.leftInd=0;
-    harry.upInd=0;
-    harry.downInd=0;
+		// for (int i = 0; i < 201; i++)
+		// {
+		// 	hocrux[i] = 0;
+		// }
         
     }
 
@@ -272,6 +330,7 @@ void iSpecialKeyboard(unsigned char key) {
 				harry.upCount = false;
 				harry.leftCount = false;
 				harry.rightCount = true;
+				printf("%d %d\n",harryNow[0],harryNow[1]);
                 harry.lastcount=0;
 			}
 			else
@@ -289,6 +348,7 @@ void iSpecialKeyboard(unsigned char key) {
 				harry.upCount = false;
 				harry.leftCount = true;
 				harry.rightCount = false;
+				printf("%d %d\n",harryNow[0],harryNow[1]);
                 harry.lastcount=1;
 			}
 			else
@@ -307,7 +367,7 @@ void iSpecialKeyboard(unsigned char key) {
 				harry.upCount = true;
 				harry.leftCount = false;
 				harry.rightCount = false;
-                printf("%d %d",harryNow[0],harryNow[1]);
+                printf("%d %d\n",harryNow[0],harryNow[1]);
                 harry.lastcount=2;
 			}
 			else
@@ -326,6 +386,7 @@ void iSpecialKeyboard(unsigned char key) {
 				harry.upCount = false;
 				harry.leftCount = false;
 				harry.rightCount = false;
+				printf("%d %d\n",harryNow[0],harryNow[1]);
                 harry.lastcount=3;
 			}
 			else
@@ -411,7 +472,10 @@ void Harrymove(){
 	if(harry.rightCount){
 		harry.x+=mazepixel;
         harryNow[1]++;
-        maze[mazeLevel][harryNow[1]][harryNow[0]]=0;
+		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==2){
+			snitchCollected++;
+			maze[mazeLevel][harryNow[0]][harryNow[1]]=0;
+		}
 		harry.rightInd++;
         if(harry.rightInd>1) harry.rightInd=0;
         harry.rightCount=false;
@@ -419,7 +483,10 @@ void Harrymove(){
 	if(harry.leftCount){
 		harry.x-=mazepixel;
         harryNow[1]--;
-        maze[mazeLevel][harryNow[1]][harryNow[0]]=0;
+		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==2){
+			snitchCollected++;
+			maze[mazeLevel][harryNow[0]][harryNow[1]]=0;
+		}
 		harry.leftInd++;
         if(harry.leftInd>1) harry.leftInd=0;
         harry.leftCount=false;
@@ -427,7 +494,10 @@ void Harrymove(){
 	if(harry.upCount){
 		harry.y+=mazepixel;
         harryNow[0]--;
-        maze[mazeLevel][harryNow[1]][harryNow[0]]=0;
+		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==2){
+			snitchCollected++;
+			maze[mazeLevel][harryNow[0]][harryNow[1]]=0;
+		}
 		harry.upInd++;
         if(harry.upInd>1) harry.upInd=0;
         harry.upCount=false;
@@ -435,7 +505,10 @@ void Harrymove(){
 	if(harry.downCount){
 		harry.y-=mazepixel;
         harryNow[0]++;
-        maze[mazeLevel][harryNow[1]][harryNow[0]]=0;
+		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==2){
+			snitchCollected++;
+			maze[mazeLevel][harryNow[0]][harryNow[1]]=0;
+		}
 		harry.downInd++;
         if(harry.downInd>1) harry.downInd=0;
         harry.downCount=false;
@@ -479,7 +552,7 @@ void Harrymove(){
 // }
 
 int main() {
-	setMazeAra();
+	harryinitial();
 	//iSetTimer(10, checkTrigger);
 	//iSetTimer(harrytime,Harrymove);
 	//place your own initialization codes here.
