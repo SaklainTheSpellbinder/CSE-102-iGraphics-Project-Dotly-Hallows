@@ -13,6 +13,7 @@ void newgame(int level);
 void checkTrigger();
 void dementorinitial();
 void harryinitial();
+void movedementor();
 int dementortime=100;
 int brickNum;
 int snitchesNum;
@@ -32,6 +33,19 @@ int harryNow[2]={19,9};
 int snitchCollected=0;
 char score[1000];
 int point=0;
+typedef struct{
+	int upInd, downInd, leftInd, rightInd;
+    int x;
+    int y;
+    int lastcount;
+    bool upCount, downCount, leftCount, rightCount;
+    int right, left, up, down;
+	bool dead;
+	int target[2];
+}dementor;
+
+dementor dem1,dem2,dem3,basil;
+
 
 typedef struct {
     int upInd, downInd, leftInd, rightInd;
@@ -106,7 +120,13 @@ char harrydown[9][100]={"assets\\harry\\tile001.bmp","assets\\harry\\tile002.bmp
 char harryup[9][100]={"assets\\harry\\tile009.bmp","assets\\harry\\tile010.bmp"};
 char harryright[9][100]={"assets\\harry\\tile027.bmp","assets\\harry\\tile028.bmp"};
 char harryleft[9][100]={"assets\\harry\\tile018.bmp","assets\\harry\\tile019.bmp"};
-int x=500, y = 300, r = 20;
+char dementorright[1][100]={"assets\\dementor\\rightdementor.bmp"};
+char dementorleft[1][100]={"assets\\dementor\\leftdementor.bmp"};
+char dementordown[1][100]={"assets\\dementor\\downdementor.bmp"};
+char dementorup[1][100]={"assets\\dementor\\updementor.bmp"};
+char basiliskright[3][100]={"assets\\basilisk\\tile000.bmp","assets\\basilisk\\tile001.bmp","assets\\basilisk\\tile002.bmp"};
+char basiliskleft[3][100]={"assets\\basilisk\\left000.bmp","assets\\basilisk\\left001.bmp","assets\\basilisk\\left002.bmp"};
+//int x=500, y = 300, r = 20;
 /*
 	function iDraw() is called again and again by the system.
 
@@ -122,6 +142,7 @@ void iDraw() {
 	iText(590, 815, "SCORE: ",GLUT_BITMAP_HELVETICA_18);
 	sprintf(score,"%d",point);
 	iText(662, 815, score,GLUT_BITMAP_HELVETICA_18);
+	movedementor();
 	// for (int i = 0; i <= brickNum; i++)
 	// 	{
 	// 		iShowBMP(mazeX + mazeXcor[i], mazeY + mazeYcor[i], mazeWall[0]);
@@ -477,7 +498,76 @@ void iSpecialKeyboard(unsigned char key) {
 // }
 
 void dementorinitial(){
-	
+		int dem1initX = 8;
+		int dem1initY = 9;
+		dem1.x = mazeX + dem1initX*mazepixel;
+		dem1.y = mazeY + (20-dem1initY)*mazepixel;
+		dem1.downCount=false;
+		dem1.rightCount=false;
+		dem1.upCount=false;
+		dem1.leftCount=false;
+		dem1.rightInd=0;
+		dem1.leftInd=0;
+		dem1.upInd=0;
+		dem1.downInd=0;
+		dem1.dead=false;
+		dem1.target[0]=harryNow[0];
+		dem1.target[1]=harryNow[1];
+		
+		int dem2initX = 9;
+		int dem2initY = 9;
+		dem2.x = mazeX + dem2initX*mazepixel;
+		dem2.y = mazeY + (20-dem2initY)*mazepixel;
+		dem2.downCount=false;
+		dem2.rightCount=false;
+		dem2.upCount=false;
+		dem2.leftCount=false;
+		dem2.rightInd=0;
+		dem2.leftInd=0;
+		dem2.upInd=0;
+		dem2.downInd=0;
+		dem2.dead=false;
+		dem2.target[0]=harryNow[0];
+		dem2.target[1]=harryNow[1];
+
+		int dem3initX = 10;
+		int dem3initY = 9;
+		dem3.x = mazeX + dem3initX*mazepixel;
+		dem3.y = mazeY + (20-dem3initY)*mazepixel;
+		dem3.downCount=false;
+		dem3.rightCount=false;
+		dem3.upCount=false;
+		dem3.leftCount=false;
+		dem3.rightInd=0;
+		dem3.leftInd=0;
+		dem3.upInd=0;
+		dem3.downInd=0;
+		dem3.dead=false;
+		dem3.target[0]=harryNow[0];
+		dem3.target[1]=harryNow[1];
+
+		int basilinitX = 9;
+		int basilinitY = 8;
+		basil.x = mazeX + basilinitX*mazepixel;
+		basil.y = mazeY + (20-basilinitY)*mazepixel;
+		basil.downCount=false;
+		basil.rightCount=false;
+		basil.upCount=false;
+		basil.leftCount=false;
+		basil.rightInd=0;
+		basil.leftInd=0;
+		basil.upInd=0;
+		basil.downInd=0;
+		basil.dead=false;
+		basil.target[0]=harryNow[0];
+		basil.target[1]=harryNow[1];
+}
+
+void movedementor(){
+	iShowBMP2(dem1.x, dem1.y, dementorright[0], 255);
+	iShowBMP2(dem2.x, dem2.y, dementorright[0], 255);
+	iShowBMP2(dem3.x, dem3.y, dementorright[0], 255);
+	iShowBMP2(basil.x, basil.y, basiliskright[0], 0);
 }
 
 void Harrymove(){
@@ -589,6 +679,7 @@ void Harrymove(){
 
 int main() {
 	harryinitial();
+	dementorinitial();
 	//iSetTimer(10, checkTrigger);
 	//iSetTimer(harrytime,Harrymove);
 	//place your own initialization codes here.
