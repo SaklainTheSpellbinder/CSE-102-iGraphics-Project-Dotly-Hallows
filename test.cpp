@@ -22,6 +22,7 @@ void movebasil();
 void Harrydeadcheck();
 void lifecheck();
 void soundMoldy();
+void newgame();
 int dementortime=340;
 int brickNum;
 int snitchesNum;
@@ -49,6 +50,8 @@ bool mainmenu=true;
 bool musicOn=true;
 bool deaddialouge=false;
 bool powerup=false;
+bool instructions=false;
+bool HallOfFame=false;
 typedef struct{
 	int upInd, downInd, leftInd, rightInd;
     int x;
@@ -76,6 +79,59 @@ typedef struct {
 
 move harry;
 
+int original[3][21][19] =
+{
+	{
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+		1, 2, 2, 3, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1,
+		1, 2, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 2, 1,
+		1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 2, 2, 1,
+		1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1,
+		1, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 1,
+		1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 3, 1, 1, 1, 2, 1, 1, 1, 1,
+		0, 0, 0, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 0, 0, 0,
+		1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1,
+		1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1,
+		1, 1, 1, 1, 2, 1, 2, 1, 1, 0, 1, 1, 2, 1, 2, 1, 1, 1, 1,
+		0, 0, 0, 1, 2, 1, 2, 2, 2, 2, 3, 2, 2, 1, 2, 1, 0, 0, 0,
+		1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1,
+		1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1,
+		1, 2, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 2, 1, 2, 1, 1, 2, 1,
+		1, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 1,
+		1, 1, 3, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 1, 1,
+		1, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 3, 2, 2, 1,
+		1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1,
+		1, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 1,
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	},
+	{
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+		1, 2, 3, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 3, 1,
+		1, 2, 1, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 1, 2, 1,
+		1, 2, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1, 2, 1,
+		1, 2, 2, 2, 1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 1, 2, 2, 2, 1,
+		1, 1, 1, 1, 1, 2, 2, 2, 2, 1, 3, 2, 2, 2, 1, 1, 1, 1, 1,
+		1, 2, 2, 2, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 2, 2, 1,
+		1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1,
+		1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 1,
+		1, 2, 2, 2, 2, 1, 2, 1, 2, 3, 2, 1, 2, 1, 2, 2, 2, 2, 1,
+		1, 2, 1, 2, 1, 1, 2, 1, 1, 0, 1, 1, 2, 1, 1, 3, 1, 2, 1,
+		1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1,
+		1, 2, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 2, 1,
+		1, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 1,
+		1, 1, 2, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 1, 1,
+		1, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 1, 2, 2, 1,
+		1, 2, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 2, 1,
+		1, 2, 3, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 1,
+		1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1,
+		1, 2, 2, 2, 2, 1, 2, 2, 2, 0, 2, 2, 2, 1, 2, 2, 2, 3, 1,
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+	}
+    ,
+    {
+
+    }
+};
 
 int maze[3][21][19] =
 {
@@ -148,6 +204,7 @@ char heart[1][100]={"assets\\heart\\000.bmp"};
 char harrydeadscene[1][100]={"assets\\harrydead\\000.bmp"};
 char gameoverscene[1][100]={"assets\\Gameover.bmp"};
 char mainmenuscene[1][100]={"assets\\mainmenu.bmp"};
+char instructionscene[1][100]={"assets\\instructions.bmp"};
 //int x=500, y = 300, r = 20;
 /*
 	function iDraw() is called again and again by the system.
@@ -161,6 +218,9 @@ void iDraw() {
 	iShowBMP(0,0,BGImg[0]);
 	if(mainmenu){
 		iShowBMP(0,0,mainmenuscene[0]);
+	}
+	if(instructions){
+		iShowBMP(0,0,instructionscene[0]);
 	}
 	if(playgame){
 		drawmaze();
@@ -298,6 +358,34 @@ void iMouse(int button, int state, int mx, int my) {
 			if((mx>=337 && mx<=460) && (my>=302 && my<=380)){
 				mainmenu=false;
 				playgame=true;
+				newgame();
+			}
+			if((mx>=287 && mx<=535) && (my>=101 && my<=162)){
+				mainmenu=false;
+				instructions=true;
+			}
+		}
+		if(instructions){
+			if((mx>=21 && mx<=149) && (my>=777 && my<=828)){
+				instructions=false;
+				mainmenu=true;
+			}
+		}
+		if(gameover){
+			if((mx>=277 && mx<=517) && (my>=207 && my<=281)){
+				gameover=false;
+				mainmenu=true;
+				if(deaddialouge){
+					deaddialouge=false;
+					PlaySound(0,0,0);
+					musicOn=true;
+					if(musicOn){
+						PlaySound(TEXT("assets\\sound\\gamesound.WAV"), NULL,SND_LOOP | SND_ASYNC );
+					}
+				}
+			}
+			if((mx>=291 && mx<=507) && (my>=102 && my<=172)){
+				exit(0);
 			}
 		}
 		//place your codes here
@@ -1599,6 +1687,22 @@ void soundMoldy(){
 	}
 	if(deaddialouge){
 		PlaySound(TEXT("assets\\sound\\youknowwho.WAV"), NULL,SND_ASYNC );
+	}
+}
+
+void newgame(){
+	harryinitial();
+	dementorinitial();
+	life=3;
+	mazeLevel=0;
+	point=0;
+	snitchCollected=0;
+	for(int eee=0;eee<3;eee++){
+		for(int cdi=0;cdi<21;cdi++){
+			for(int cse=0;cse<19;cse++){
+				maze[eee][cdi][cse]=original[eee][cdi][cse];
+			}
+		}
 	}
 }
 
