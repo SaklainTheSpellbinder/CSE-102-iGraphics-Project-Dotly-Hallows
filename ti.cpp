@@ -14,7 +14,11 @@ void checkTrigger();
 void dementorinitial();
 void harryinitial();
 void movedementor();
-int dementortime=100;
+void movedem1();
+void movedem2();
+void movedem3();
+void movebasil();
+int dementortime=270;
 int brickNum;
 int snitchesNum;
 int mazeHeight = 840;
@@ -385,14 +389,15 @@ void dementorinitial(){
 		dem1.leftInd=0;
 		dem1.upInd=0;
 		dem1.downInd=0;
+		dem1.direction=0;
 		dem1.dead=false;
 		dem1.target[0]=harryNow[0];
 		dem1.target[1]=harryNow[1];
 		
-		int dem2initX = 9;
-		int dem2initY = 9;
-		dem2.now[0]=9;
-		dem2.now[1]=9;
+		int dem2initX = 1;
+		int dem2initY = 1;
+		dem2.now[0]=1;
+		dem2.now[1]=1;
 		dem2.x = mazeX + dem2initX*mazepixel;
 		dem2.y = mazeY + (20-dem2initY)*mazepixel;
 		dem2.downCount=false;
@@ -403,6 +408,7 @@ void dementorinitial(){
 		dem2.leftInd=0;
 		dem2.upInd=0;
 		dem2.downInd=0;
+		dem2.direction=0;
 		dem2.dead=false;
 		dem2.target[0]=harryNow[0];
 		dem2.target[1]=harryNow[1];
@@ -421,6 +427,7 @@ void dementorinitial(){
 		dem3.leftInd=0;
 		dem3.upInd=0;
 		dem3.downInd=0;
+		dem3.direction=0;
 		dem3.dead=false;
 		dem3.target[0]=harryNow[0];
 		dem3.target[1]=harryNow[1];
@@ -439,38 +446,39 @@ void dementorinitial(){
 		basil.leftInd=0;
 		basil.upInd=0;
 		basil.downInd=0;
+		basil.direction=0;
 		basil.dead=false;
 		basil.target[0]=harryNow[0];
 		basil.target[1]=harryNow[1];
 }
 
 //mara khawa AI editing starts
-int NoWall(int b){
+int NoWall(int arr[],int b){
     // up=2
     // down =3
     // right 0
     // left =1
     if(b==2){
-        if ((maze[mazeLevel][harryNow[0]-1][harryNow[1]])!=1)
+        if ((maze[mazeLevel][arr[0]-1][arr[1]])!=1)
             return 1;
         else
             return 0;
     }
-    else if(b==3){
-        if ((maze[mazeLevel][harryNow[0]+1][harryNow[1]])!=1)
+    if(b==3){
+        if ((maze[mazeLevel][arr[0]+1][arr[1]])!=1)
             return 1;
         else
             return 0;
     }
-    else if(b==0){
-        if ((maze[mazeLevel][harryNow[0]][harryNow[1]+1])!=1){
+    if(b==0){
+        if ((maze[mazeLevel][arr[0]][arr[1]+1])!=1){
             return 1;
         }
         else
             return 0;
     }
-    else{
-        if ((maze[mazeLevel][harryNow[0]][harryNow[1]-1])!=1)
+    if(b==1){
+        if ((maze[mazeLevel][arr[0]][arr[1]-1])!=1)
             return 1;
         else
             return 0;
@@ -478,27 +486,954 @@ int NoWall(int b){
 }
 
 void movedem1(){
-    if(dem1.rightCount){
-        if(dem1.target[1]>dem1.now[1] && NoWall(0) ){
+	dem1.target[0]=harryNow[0];
+	dem1.target[1]=harryNow[1];
+    if(dem1.direction==0){
+        if(dem1.target[1]>dem1.now[1] && NoWall(dem1.now,0) ){
+			dem1.now[1]++;
             dem1.x+=mazepixel;
         }
-        else if(!NoWall(0)){
-            if(dem1.target[0]>dem1.now[0] && NoWall(3)){
-                dem1.rightCount=false;
-                dem1.downCount=true;
-                dem1.leftCount=false;
-                dem1.upCount=false;
+        else if(!NoWall(dem1.now,0)){
+            if(dem1.target[0]>dem1.now[0] && NoWall(dem1.now,3)){
+                dem1.direction=3;
+				dem1.now[0]++;
                 dem1.y-=mazepixel;
             }
-            else if(dem1.target[0]<dem1.now[0] && NoWall(2)){
-                dem1.rightCount=false;
-                dem1.downCount=false;
-                dem1.leftCount=false;
-                dem1.upCount=true;
+            else if(dem1.target[0]<dem1.now[0] && NoWall(dem1.now,2)){
+                dem1.direction=2;
+				dem1.now[0]--;
                 dem1.y+=mazepixel;
             }
+			else if(dem1.target[1]<dem1.now[1] && NoWall(dem1.now,1)){
+				dem1.direction=1;
+				dem1.now[1]--;
+				dem1.x-=mazepixel;
+			}
+			else if(NoWall(dem1.now,3)){
+				dem1.direction=3;
+				dem1.now[0]++;
+				dem1.y-=mazepixel;
+			}
+			else if(NoWall(dem1.now,2)){
+				dem1.direction=2;
+				dem1.now[0]--;
+				dem1.y+=mazepixel;
+			}
+			else if(NoWall(dem1.now,1)){
+				dem1.direction=1;
+				dem1.now[1]--;
+				dem1.x-=mazepixel;
+			}
         }
+		else if(NoWall(dem1.now,0)){
+			if(dem1.target[0]>dem1.now[0] && NoWall(dem1.now,3)){
+                dem1.direction=3;
+				dem1.now[0]++;
+                dem1.y-=mazepixel;
+            }
+            else if(dem1.target[0]<dem1.now[0] && NoWall(dem1.now,2)){
+                dem1.direction=2;
+				dem1.now[0]--;
+                dem1.y+=mazepixel;
+            }
+			else{
+				dem1.direction=0;
+				dem1.now[1]++;
+				dem1.x+=mazepixel;
+			}
+		}
     }
+
+	else if(dem1.direction==1){
+		if(dem1.target[0]>dem1.now[0] && NoWall(dem1.now,3)){
+			dem1.direction=3;
+			dem1.now[0]++;
+			dem1.y-=mazepixel;
+		}
+        else if(dem1.target[1]<dem1.now[1] && NoWall(dem1.now,1) ){
+			dem1.now[1]--;
+            dem1.x-=mazepixel;
+        }
+        else if(!NoWall(dem1.now,1)){
+            if(dem1.target[0]>dem1.now[0] && NoWall(dem1.now,3)){
+                dem1.direction=3;
+				dem1.now[0]++;
+                dem1.y-=mazepixel;
+            }
+            else if(dem1.target[0]<dem1.now[0] && NoWall(dem1.now,2)){
+                dem1.direction=2;
+				dem1.now[0]--;
+                dem1.y+=mazepixel;
+            }
+			else if(dem1.target[1]>dem1.now[1] && NoWall(dem1.now,0)){
+				dem1.direction=0;
+				dem1.now[1]++;
+				dem1.x+=mazepixel;
+			}
+			else if(NoWall(dem1.now,3)){
+				dem1.direction=3;
+				dem1.now[0]++;
+				dem1.y-=mazepixel;
+			}
+			else if(NoWall(dem1.now,2)){
+				dem1.direction=2;
+				dem1.now[0]--;
+				dem1.y+=mazepixel;
+			}
+			else if(NoWall(dem1.now,0)){
+				dem1.direction=0;
+				dem1.now[1]++;
+				dem1.x+=mazepixel;
+			}
+        }
+		else if(NoWall(dem1.now,1)){
+			if(dem1.target[0]>dem1.now[0] && NoWall(dem1.now,3)){
+                dem1.direction=3;
+				dem1.now[0]++;
+                dem1.y-=mazepixel;
+            }
+            else if(dem1.target[0]<dem1.now[0] && NoWall(dem1.now,2)){
+                dem1.direction=2;
+				dem1.now[0]--;
+                dem1.y+=mazepixel;
+            }
+			else{
+				dem1.now[1]--;
+				dem1.x-=mazepixel;
+			}
+		}
+    }
+	
+	else if(dem1.direction==2){
+		if(dem1.target[1]<dem1.now[1] && NoWall(dem1.now,1)){
+			dem1.direction=1;
+			dem1.now[1]--;
+			dem1.x-=mazepixel;	
+		}
+        else if(dem1.target[0]<dem1.now[0] && NoWall(dem1.now,2) ){
+			dem1.direction=2;
+			dem1.now[0]--;
+            dem1.y+=mazepixel;
+        }
+        else if(!NoWall(dem1.now,2)){
+            if(dem1.target[1]>dem1.now[1] && NoWall(dem1.now,0)){
+				dem1.direction=0;
+				dem1.now[1]++;
+				dem1.x+=mazepixel;
+			}
+            else if(dem1.target[1]<dem1.now[1] && NoWall(dem1.now,1)){
+                dem1.direction=1;
+				dem1.now[1]--;
+                dem1.x-=mazepixel;
+            }
+			else if(dem1.target[0]>dem1.now[0] && NoWall(dem1.now,3)){
+                dem1.direction=3;
+				dem1.now[0]++;
+                dem1.y-=mazepixel;
+            }
+			else if(NoWall(dem1.now,1)){
+				dem1.direction=1;
+				dem1.now[1]--;
+				dem1.x-=mazepixel;
+			}
+			else if(NoWall(dem1.now,3)){
+				dem1.direction=3;
+				dem1.now[0]++;
+				dem1.y-=mazepixel;
+			}
+			else if(NoWall(dem1.now,0)){
+				dem1.direction=0;
+				dem1.now[1]++;
+				dem1.x+=mazepixel;
+			}
+        }
+		else if(NoWall(dem1.now,2)){
+			if(dem1.target[1]>dem1.now[1] && NoWall(dem1.now,0)){
+				dem1.direction=0;
+				dem1.now[1]++;
+				dem1.x+=mazepixel;
+			}
+			else if(dem1.target[1]<dem1.now[1] && NoWall(dem1.now,1)){
+                dem1.direction=1;
+				dem1.now[1]--;
+                dem1.x-=mazepixel;
+            }
+			else{
+				dem1.now[0]--;
+				dem1.y+=mazepixel;
+			}
+		}
+    }
+
+	else if(dem1.direction==3){
+		// if(dem1.target[1]>dem1.now[1] && NoWall(dem1.now,0)){
+		// 	dem1.direction=0;
+		// 	dem1.now[1]++;
+		// 	dem1.x+=mazepixel;	
+		// }
+        if(dem1.target[0]>dem1.now[0] && NoWall(dem1.now,3) ){
+			dem1.now[0]++;
+            dem1.y-=mazepixel;
+        }
+        else if(!NoWall(dem1.now,3 )){
+            if(dem1.target[0]<dem1.now[0] && NoWall(dem1.now,2)){
+                dem1.direction=2;
+				dem1.now[0]--;
+                dem1.y+=mazepixel;
+            }
+            else if(dem1.target[1]<dem1.now[1] && NoWall(dem1.now,1)){
+                dem1.direction=1;
+				dem1.now[1]--;
+                dem1.x-=mazepixel;
+            }
+			else if(dem1.target[1]>dem1.now[1] && NoWall(dem1.now,0)){
+				dem1.direction=0;
+				dem1.now[1]++;
+				dem1.x+=mazepixel;
+			}
+			else if(NoWall(dem1.now,1)){
+				dem1.direction=1;
+				dem1.now[1]--;
+				dem1.x-=mazepixel;
+			}
+			else if(NoWall(dem1.now,2)){
+				dem1.direction=2;
+				dem1.now[0]--;
+				dem1.y+=mazepixel;
+			}
+			else if(NoWall(dem1.now,0)){
+				dem1.direction=0;
+				dem1.now[1]++;
+				dem1.x+=mazepixel;
+			}
+        }
+		else if(NoWall(dem1.now,3)){
+			if(dem1.target[1]>dem1.now[1] && NoWall(dem1.now,0)){
+				dem1.direction=0;
+				dem1.now[1]++;
+				dem1.x+=mazepixel;
+			}
+			else if(dem1.target[1]<dem1.now[1] && NoWall(dem1.now,1)){
+                dem1.direction=1;
+				dem1.now[1]--;
+                dem1.x-=mazepixel;
+            }
+			else{
+				dem1.now[0]++;
+				dem1.y-=mazepixel;
+			}
+		}
+    }	
+}
+
+void movedem2(){
+	dem2.target[0]=harryNow[0];
+	dem2.target[1]=harryNow[1];
+    if(dem2.direction==0){
+        if(dem2.target[1]>dem2.now[1] && NoWall(dem2.now,0) ){
+			dem2.now[1]++;
+            dem2.x+=mazepixel;
+        }
+        else if(!NoWall(dem2.now,0)){
+            if(dem2.target[0]>dem2.now[0] && NoWall(dem2.now,3)){
+                dem2.direction=3;
+				dem2.now[0]++;
+                dem2.y-=mazepixel;
+            }
+            else if(dem2.target[0]<dem2.now[0] && NoWall(dem2.now,2)){
+                dem2.direction=2;
+				dem2.now[0]--;
+                dem2.y+=mazepixel;
+            }
+			else if(dem2.target[1]<dem2.now[1] && NoWall(dem2.now,1)){
+				dem2.direction=1;
+				dem2.now[1]--;
+				dem2.x-=mazepixel;
+			}
+			else if(NoWall(dem2.now,3)){
+				dem2.direction=3;
+				dem2.now[0]++;
+				dem2.y-=mazepixel;
+			}
+			else if(NoWall(dem2.now,2)){
+				dem2.direction=2;
+				dem2.now[0]--;
+				dem2.y+=mazepixel;
+			}
+			else if(NoWall(dem2.now,1)){
+				dem2.direction=1;
+				dem2.now[1]--;
+				dem2.x-=mazepixel;
+			}
+        }
+		else if(NoWall(dem2.now,0)){
+				dem2.direction=0;
+				dem2.now[1]++;
+				dem2.x+=mazepixel;	
+		}
+    }
+
+	else if(dem2.direction==1){
+		if(dem2.target[0]>dem2.now[0] && NoWall(dem2.now,3)){
+			dem2.direction=3;
+			dem2.now[0]++;
+			dem2.y-=mazepixel;
+		}
+        else if(dem2.target[1]<dem2.now[1] && NoWall(dem2.now,1) ){
+			dem2.now[1]--;
+            dem2.x-=mazepixel;
+        }
+        else if(!NoWall(dem2.now,1)){
+            if(dem2.target[0]>dem2.now[0] && NoWall(dem2.now,3)){
+                dem2.direction=3;
+				dem2.now[0]++;
+                dem2.y-=mazepixel;
+            }
+            else if(dem2.target[0]<dem2.now[0] && NoWall(dem2.now,2)){
+                dem2.direction=2;
+				dem2.now[0]--;
+                dem2.y+=mazepixel;
+            }
+			else if(dem2.target[1]>dem2.now[1] && NoWall(dem2.now,0)){
+				dem2.direction=0;
+				dem2.now[1]++;
+				dem2.x+=mazepixel;
+			}
+			else if(NoWall(dem2.now,3)){
+				dem2.direction=3;
+				dem2.now[0]++;
+				dem2.y-=mazepixel;
+			}
+			else if(NoWall(dem2.now,2)){
+				dem2.direction=2;
+				dem2.now[0]--;
+				dem2.y+=mazepixel;
+			}
+			else if(NoWall(dem2.now,0)){
+				dem2.direction=0;
+				dem2.now[1]++;
+				dem2.x+=mazepixel;
+			}
+        }
+		else if(NoWall(dem2.now,1)){
+			if(dem2.target[0]<dem2.now[0] && NoWall(dem2.now,2)){
+                dem2.direction=2;
+				dem2.now[0]--;
+                dem2.y+=mazepixel;
+            }
+			else if(dem2.target[0]>dem2.now[0] && NoWall(dem2.now,3)){
+                dem2.direction=3;
+				dem2.now[0]++;
+                dem2.y-=mazepixel;
+            }
+			else{
+				dem2.now[1]--;
+				dem2.x-=mazepixel;
+			}
+		}
+    }
+	
+	else if(dem2.direction==2){
+		// if(dem1.target[1]<dem1.now[1] && NoWall(dem1.now,1)){
+		// 	dem1.direction=1;
+		// 	dem1.now[1]--;
+		// 	dem1.x-=mazepixel;	
+		// }
+        if(dem2.target[0]<dem2.now[0] && NoWall(dem2.now,2) ){
+			dem2.now[0]--;
+            dem2.y+=mazepixel;
+        }
+        else if(!NoWall(dem2.now,2)){
+            if(dem2.target[0]>dem2.now[0] && NoWall(dem2.now,3)){
+                dem2.direction=3;
+				dem2.now[0]++;
+                dem2.y-=mazepixel;
+            }
+			else if(dem2.target[1]>dem2.now[1] && NoWall(dem2.now,0)){
+				dem2.direction=0;
+				dem2.now[1]++;
+				dem2.x+=mazepixel;
+			}
+            else if(dem2.target[1]<dem2.now[1] && NoWall(dem2.now,1)){
+                dem2.direction=1;
+				dem2.now[1]--;
+                dem2.x-=mazepixel;
+            }
+			else if(NoWall(dem2.now,3)){
+				dem2.direction=3;
+				dem2.now[0]++;
+				dem2.y-=mazepixel;
+			}
+			else if(NoWall(dem2.now,0)){
+				dem2.direction=0;
+				dem2.now[1]++;
+				dem2.x+=mazepixel;
+			}
+			else if(NoWall(dem2.now,1)){
+				dem2.direction=1;
+				dem2.now[1]--;
+				dem2.x-=mazepixel;
+			}
+        }
+		else if(NoWall(dem2.now,2)){
+			// if(dem1.target[1]<dem1.now[1] && NoWall(dem1.now,1)){
+            //     dem1.direction=1;
+			// 	dem1.now[1]--;
+            //     dem1.x-=mazepixel;
+            // }
+			// else if(dem1.target[1]>dem1.now[1] && NoWall(dem1.now,0)){
+			// 	dem1.direction=0;
+			// 	dem1.now[1]++;
+			// 	dem1.x+=mazepixel;
+			// }
+			// else{
+				dem2.now[0]--;
+				dem2.y+=mazepixel;
+			//}
+		}
+    }
+
+	else if(dem2.direction==3){
+		// if(dem2.target[1]>dem2.now[1] && NoWall(dem2.now,0)){
+		// 	dem2.direction=0;
+		// 	dem2.now[1]++;
+		// 	dem2.x+=mazepixel;	
+		// }
+        if(dem2.target[0]>dem2.now[0] && NoWall(dem2.now,3) ){
+			dem2.now[0]++;
+            dem2.y-=mazepixel;
+        }
+        else if(!NoWall(dem2.now,3)){
+            if(dem2.target[0]<dem2.now[0] && NoWall(dem2.now,2)){
+                dem2.direction=2;
+				dem2.now[0]--;
+                dem2.y+=mazepixel;
+            }
+			else if(dem2.target[1]>dem2.now[1] && NoWall(dem2.now,0)){
+				dem2.direction=0;
+				dem2.now[1]++;
+				dem2.x+=mazepixel;
+			}
+            else if(dem2.target[1]<dem2.now[1] && NoWall(dem2.now,1)){
+                dem2.direction=1;
+				dem2.now[1]--;
+                dem2.x-=mazepixel;
+            }
+			else if(NoWall(dem2.now,0)){
+				dem2.direction=0;
+				dem2.now[1]++;
+				dem2.x+=mazepixel;
+			}
+			else if(NoWall(dem2.now,2)){
+				dem2.direction=2;
+				dem2.now[0]--;
+				dem2.y+=mazepixel;
+			}
+			else if(NoWall(dem2.now,1)){
+				dem2.direction=1;
+				dem2.now[1]--;
+				dem2.x-=mazepixel;
+			}
+        }
+		else if(NoWall(dem2.now,3)){
+			if(dem2.target[1]<dem2.now[1] && NoWall(dem2.now,1)){
+                dem2.direction=1;
+				dem2.now[1]--;
+                dem2.x-=mazepixel;
+            }
+			else if(dem2.target[1]>dem2.now[1] && NoWall(dem2.now,0)){
+				dem2.direction=0;
+				dem2.now[1]++;
+				dem2.x+=mazepixel;
+			}
+			else{
+				dem2.now[0]++;
+				dem2.y-=mazepixel;
+			}
+		}
+    }	
+}
+
+void movedem3(){
+	dem3.target[0]=harryNow[0];
+	dem3.target[1]=harryNow[1];
+    if(dem3.direction==0){
+        if(dem3.target[1]>dem3.now[1] && NoWall(dem3.now,0) ){
+			dem3.now[1]++;
+            dem3.x+=mazepixel;
+        }
+        else if(!NoWall(dem3.now,0)){
+            if(dem3.target[0]>dem3.now[0] && NoWall(dem3.now,3)){
+                dem3.direction=3;
+				dem3.now[0]++;
+                dem3.y-=mazepixel;
+            }
+            else if(dem3.target[0]<dem3.now[0] && NoWall(dem3.now,2)){
+                dem3.direction=2;
+				dem3.now[0]--;
+                dem3.y+=mazepixel;
+            }
+			else if(dem3.target[1]<dem3.now[1] && NoWall(dem3.now,1)){
+				dem3.direction=1;
+				dem3.now[1]--;
+				dem3.x-=mazepixel;
+			}
+			else if(NoWall(dem3.now,3)){
+				dem3.direction=3;
+				dem3.now[0]++;
+				dem3.y-=mazepixel;
+			}
+			else if(NoWall(dem3.now,2)){
+				dem3.direction=2;
+				dem3.now[0]--;
+				dem3.y+=mazepixel;
+			}
+			else if(NoWall(dem3.now,1)){
+				dem3.direction=1;
+				dem3.now[1]--;
+				dem3.x-=mazepixel;
+			}
+        }
+		else if(NoWall(dem3.now,0)){
+			if(dem3.target[0]>dem3.now[0] && NoWall(dem3.now,3)){
+                dem3.direction=3;
+				dem3.now[0]++;
+                dem3.y-=mazepixel;
+            }
+            else if(dem3.target[0]<dem3.now[0] && NoWall(dem3.now,2)){
+                dem3.direction=2;
+				dem3.now[0]--;
+                dem3.y+=mazepixel;
+            }
+			else{
+				dem3.direction=0;
+				dem3.now[1]++;
+				dem3.x+=mazepixel;
+			}
+		}
+    }
+
+	else if(dem3.direction==1){
+		if(dem3.target[0]>dem3.now[0] && NoWall(dem3.now,3)){
+			dem3.direction=3;
+			dem3.now[0]++;
+			dem3.y-=mazepixel;
+		}
+        else if(dem3.target[1]<dem3.now[1] && NoWall(dem3.now,1) ){
+			dem3.now[1]--;
+            dem3.x-=mazepixel;
+        }
+        else if(!NoWall(dem3.now,1)){
+            if(dem3.target[0]>dem3.now[0] && NoWall(dem3.now,3)){
+                dem3.direction=3;
+				dem3.now[0]++;
+                dem3.y-=mazepixel;
+            }
+            else if(dem3.target[0]<dem3.now[0] && NoWall(dem3.now,2)){
+                dem3.direction=2;
+				dem3.now[0]--;
+                dem3.y+=mazepixel;
+            }
+			else if(dem3.target[1]>dem3.now[1] && NoWall(dem3.now,0)){
+				dem3.direction=0;
+				dem3.now[1]++;
+				dem3.x+=mazepixel;
+			}
+			else if(NoWall(dem3.now,3)){
+				dem3.direction=3;
+				dem3.now[0]++;
+				dem3.y-=mazepixel;
+			}
+			else if(NoWall(dem3.now,2)){
+				dem3.direction=2;
+				dem3.now[0]--;
+				dem3.y+=mazepixel;
+			}
+			else if(NoWall(dem3.now,0)){
+				dem3.direction=0;
+				dem3.now[1]++;
+				dem3.x+=mazepixel;
+			}
+        }
+		else if(NoWall(dem3.now,1)){
+			if(dem3.target[0]>dem3.now[0] && NoWall(dem3.now,3)){
+                dem3.direction=3;
+				dem3.now[0]++;
+                dem3.y-=mazepixel;
+            }
+            else if(dem3.target[0]<dem3.now[0] && NoWall(dem3.now,2)){
+                dem3.direction=2;
+				dem3.now[0]--;
+                dem3.y+=mazepixel;
+            }
+			else{
+				dem3.now[1]--;
+				dem3.x-=mazepixel;
+			}
+		}
+    }
+	
+	else if(dem3.direction==2){
+		if(dem3.target[1]<dem3.now[1] && NoWall(dem3.now,1)){
+			dem3.direction=1;
+			dem3.now[1]--;
+			dem3.x-=mazepixel;	
+		}
+        else if(dem3.target[0]<dem3.now[0] && NoWall(dem3.now,2) ){
+			dem3.direction=2;
+			dem3.now[0]--;
+            dem3.y+=mazepixel;
+        }
+        else if(!NoWall(dem3.now,2)){
+            if(dem3.target[1]>dem3.now[1] && NoWall(dem3.now,0)){
+				dem3.direction=0;
+				dem3.now[1]++;
+				dem3.x+=mazepixel;
+			}
+            else if(dem3.target[1]<dem3.now[1] && NoWall(dem3.now,1)){
+                dem3.direction=1;
+				dem3.now[1]--;
+                dem3.x-=mazepixel;
+            }
+			else if(dem3.target[0]>dem3.now[0] && NoWall(dem3.now,3)){
+                dem3.direction=3;
+				dem3.now[0]++;
+                dem3.y-=mazepixel;
+            }
+			else if(NoWall(dem3.now,1)){
+				dem3.direction=1;
+				dem3.now[1]--;
+				dem3.x-=mazepixel;
+			}
+			else if(NoWall(dem3.now,3)){
+				dem3.direction=3;
+				dem3.now[0]++;
+				dem3.y-=mazepixel;
+			}
+			else if(NoWall(dem3.now,0)){
+				dem3.direction=0;
+				dem3.now[1]++;
+				dem3.x+=mazepixel;
+			}
+        }
+		else if(NoWall(dem3.now,2)){
+			if(dem3.target[1]>dem3.now[1] && NoWall(dem3.now,0)){
+				dem3.direction=0;
+				dem3.now[1]++;
+				dem3.x+=mazepixel;
+			}
+			else if(dem3.target[1]<dem3.now[1] && NoWall(dem3.now,1)){
+                dem3.direction=1;
+				dem3.now[1]--;
+                dem3.x-=mazepixel;
+            }
+			else{
+				dem3.now[0]--;
+				dem3.y+=mazepixel;
+			}
+		}
+    }
+
+	else if(dem3.direction==3){
+		// if(dem3.target[1]>dem1.now[1] && NoWall(dem3.now,0)){
+		// 	dem3.direction=0;
+		// 	dem3.now[1]++;
+		// 	dem3.x+=mazepixel;	
+		// }
+        if(dem3.target[0]>dem3.now[0] && NoWall(dem3.now,3) ){
+			dem3.now[0]++;
+            dem3.y-=mazepixel;
+        }
+        else if(!NoWall(dem3.now,3 )){
+            if(dem3.target[0]<dem3.now[0] && NoWall(dem3.now,2)){
+                dem3.direction=2;
+				dem3.now[0]--;
+                dem3.y+=mazepixel;
+            }
+            else if(dem3.target[1]<dem3.now[1] && NoWall(dem3.now,1)){
+                dem3.direction=1;
+				dem3.now[1]--;
+                dem3.x-=mazepixel;
+            }
+			else if(dem3.target[1]>dem3.now[1] && NoWall(dem3.now,0)){
+				dem3.direction=0;
+				dem3.now[1]++;
+				dem3.x+=mazepixel;
+			}
+			else if(NoWall(dem3.now,1)){
+				dem3.direction=1;
+				dem3.now[1]--;
+				dem3.x-=mazepixel;
+			}
+			else if(NoWall(dem3.now,2)){
+				dem3.direction=2;
+				dem3.now[0]--;
+				dem3.y+=mazepixel;
+			}
+			else if(NoWall(dem3.now,0)){
+				dem3.direction=0;
+				dem3.now[1]++;
+				dem3.x+=mazepixel;
+			}
+        }
+		else if(NoWall(dem3.now,3)){
+			if(dem3.target[1]>dem3.now[1] && NoWall(dem3.now,0)){
+				dem3.direction=0;
+				dem3.now[1]++;
+				dem3.x+=mazepixel;
+			}
+			else if(dem3.target[1]<dem3.now[1] && NoWall(dem3.now,1)){
+                dem3.direction=1;
+				dem3.now[1]--;
+                dem3.x-=mazepixel;
+            }
+			else{
+				dem3.now[0]++;
+				dem3.y-=mazepixel;
+			}
+		}
+    }	
+}
+
+void movebasil(){
+	basil.target[0]=harryNow[0];
+	basil.target[1]=harryNow[1];
+    if(basil.direction==0){
+        if(basil.target[1]>basil.now[1] && NoWall(basil.now,0) ){
+			basil.now[1]++;
+            basil.x+=mazepixel;
+        }
+        else if(!NoWall(basil.now,0)){
+            if(basil.target[0]>basil.now[0] && NoWall(basil.now,3)){
+                basil.direction=3;
+				basil.now[0]++;
+                basil.y-=mazepixel;
+            }
+            else if(basil.target[0]<basil.now[0] && NoWall(basil.now,2)){
+                basil.direction=2;
+				basil.now[0]--;
+                basil.y+=mazepixel;
+            }
+			else if(basil.target[1]<basil.now[1] && NoWall(basil.now,1)){
+				basil.direction=1;
+				basil.now[1]--;
+				basil.x-=mazepixel;
+			}
+			else if(NoWall(basil.now,3)){
+				basil.direction=3;
+				basil.now[0]++;
+				basil.y-=mazepixel;
+			}
+			else if(NoWall(basil.now,2)){
+				basil.direction=2;
+				basil.now[0]--;
+				basil.y+=mazepixel;
+			}
+			else if(NoWall(basil.now,1)){
+				basil.direction=1;
+				basil.now[1]--;
+				basil.x-=mazepixel;
+			}
+        }
+		else if(NoWall(basil.now,0)){
+			if(basil.target[0]>basil.now[0] && NoWall(basil.now,3)){
+                basil.direction=3;
+				basil.now[0]++;
+                basil.y-=mazepixel;
+            }
+            else if(basil.target[0]<basil.now[0] && NoWall(basil.now,2)){
+                basil.direction=2;
+				basil.now[0]--;
+                basil.y+=mazepixel;
+            }
+			else{
+				basil.direction=0;
+				basil.now[1]++;
+				basil.x+=mazepixel;
+			}
+		}
+    }
+
+	else if(basil.direction==1){
+		if(basil.target[0]>basil.now[0] && NoWall(basil.now,3)){
+			basil.direction=3;
+			basil.now[0]++;
+			basil.y-=mazepixel;
+		}
+        else if(basil.target[1]<basil.now[1] && NoWall(basil.now,1) ){
+			basil.now[1]--;
+            basil.x-=mazepixel;
+        }
+        else if(!NoWall(basil.now,1)){
+            if(basil.target[0]>basil.now[0] && NoWall(basil.now,3)){
+                basil.direction=3;
+				basil.now[0]++;
+                basil.y-=mazepixel;
+            }
+            else if(basil.target[0]<basil.now[0] && NoWall(basil.now,2)){
+                basil.direction=2;
+				basil.now[0]--;
+                basil.y+=mazepixel;
+            }
+			else if(basil.target[1]>basil.now[1] && NoWall(basil.now,0)){
+				basil.direction=0;
+				basil.now[1]++;
+				basil.x+=mazepixel;
+			}
+			else if(NoWall(basil.now,3)){
+				basil.direction=3;
+				basil.now[0]++;
+				basil.y-=mazepixel;
+			}
+			else if(NoWall(basil.now,2)){
+				basil.direction=2;
+				basil.now[0]--;
+				basil.y+=mazepixel;
+			}
+			else if(NoWall(basil.now,0)){
+				basil.direction=0;
+				basil.now[1]++;
+				basil.x+=mazepixel;
+			}
+        }
+		else if(NoWall(basil.now,1)){
+			if(basil.target[0]>basil.now[0] && NoWall(basil.now,3)){
+                basil.direction=3;
+				basil.now[0]++;
+                basil.y-=mazepixel;
+            }
+            else if(basil.target[0]<basil.now[0] && NoWall(basil.now,2)){
+                basil.direction=2;
+				basil.now[0]--;
+                basil.y+=mazepixel;
+            }
+			else{
+				basil.now[1]--;
+				basil.x-=mazepixel;
+			}
+		}
+    }
+	
+	else if(basil.direction==2){
+		if(basil.target[1]<basil.now[1] && NoWall(basil.now,1)){
+			basil.direction=1;
+			basil.now[1]--;
+			basil.x-=mazepixel;	
+		}
+        else if(basil.target[0]<basil.now[0] && NoWall(basil.now,2) ){
+			basil.direction=2;
+			basil.now[0]--;
+            basil.y+=mazepixel;
+        }
+        else if(!NoWall(basil.now,2)){
+            if(basil.target[1]>basil.now[1] && NoWall(basil.now,0)){
+				basil.direction=0;
+				basil.now[1]++;
+				basil.x+=mazepixel;
+			}
+            else if(basil.target[1]<basil.now[1] && NoWall(basil.now,1)){
+                basil.direction=1;
+				basil.now[1]--;
+                basil.x-=mazepixel;
+            }
+			else if(basil.target[0]>basil.now[0] && NoWall(basil.now,3)){
+                basil.direction=3;
+				basil.now[0]++;
+                basil.y-=mazepixel;
+            }
+			else if(NoWall(basil.now,1)){
+				basil.direction=1;
+				basil.now[1]--;
+				basil.x-=mazepixel;
+			}
+			else if(NoWall(basil.now,3)){
+				basil.direction=3;
+				basil.now[0]++;
+				basil.y-=mazepixel;
+			}
+			else if(NoWall(basil.now,0)){
+				basil.direction=0;
+				basil.now[1]++;
+				basil.x+=mazepixel;
+			}
+        }
+		else if(NoWall(basil.now,2)){
+			if(basil.target[1]>basil.now[1] && NoWall(basil.now,0)){
+				basil.direction=0;
+				basil.now[1]++;
+				basil.x+=mazepixel;
+			}
+			else if(basil.target[1]<basil.now[1] && NoWall(basil.now,1)){
+                basil.direction=1;
+				basil.now[1]--;
+                basil.x-=mazepixel;
+            }
+			else{
+				basil.now[0]--;
+				basil.y+=mazepixel;
+			}
+		}
+    }
+
+	else if(basil.direction==3){
+		// if(basil.target[1]>dem1.now[1] && NoWall(basil.now,0)){
+		// 	basil.direction=0;
+		// 	basil.now[1]++;
+		// 	basil.x+=mazepixel;	
+		// }
+        if(basil.target[0]>basil.now[0] && NoWall(basil.now,3) ){
+			basil.now[0]++;
+            basil.y-=mazepixel;
+        }
+        else if(!NoWall(basil.now,3 )){
+            if(basil.target[0]<basil.now[0] && NoWall(basil.now,2)){
+                basil.direction=2;
+				basil.now[0]--;
+                basil.y+=mazepixel;
+            }
+            else if(basil.target[1]<basil.now[1] && NoWall(basil.now,1)){
+                basil.direction=1;
+				basil.now[1]--;
+                basil.x-=mazepixel;
+            }
+			else if(basil.target[1]>basil.now[1] && NoWall(basil.now,0)){
+				basil.direction=0;
+				basil.now[1]++;
+				basil.x+=mazepixel;
+			}
+			else if(NoWall(basil.now,1)){
+				basil.direction=1;
+				basil.now[1]--;
+				basil.x-=mazepixel;
+			}
+			else if(NoWall(basil.now,2)){
+				basil.direction=2;
+				basil.now[0]--;
+				basil.y+=mazepixel;
+			}
+			else if(NoWall(basil.now,0)){
+				basil.direction=0;
+				basil.now[1]++;
+				basil.x+=mazepixel;
+			}
+        }
+		else if(NoWall(basil.now,3)){
+			if(basil.target[1]>basil.now[1] && NoWall(basil.now,0)){
+				basil.direction=0;
+				basil.now[1]++;
+				basil.x+=mazepixel;
+			}
+			else if(basil.target[1]<basil.now[1] && NoWall(basil.now,1)){
+                basil.direction=1;
+				basil.now[1]--;
+                basil.x-=mazepixel;
+            }
+			else{
+				basil.now[0]++;
+				basil.y-=mazepixel;
+			}
+		}
+    }	
 }
 
 void movedementor(){
@@ -583,6 +1518,8 @@ void Harrymove(){
 int main() {
 	harryinitial();
 	dementorinitial();
+	iSetTimer(dementortime,movedem1);
+	iSetTimer(dementortime,movedem2);
 	//iSetTimer(10, checkTrigger);
 	//iSetTimer(harrytime,Harrymove);
 	//place your own initialization codes here.
