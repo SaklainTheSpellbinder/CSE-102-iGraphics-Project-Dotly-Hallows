@@ -28,5 +28,5 @@ def resize_images_in_folder(folder_path, size=(40, 40)):
                 print(f"Could not resize {filename}: {e}")
 
 if __name__ == "__main__":
-    folder_path = r"D:\\iGraphics-Project\\assets\\dead"
+    folder_path = r"D:\\iGraphics-Project\\assets\\harrydead"
     resize_images_in_folder(folder_path)

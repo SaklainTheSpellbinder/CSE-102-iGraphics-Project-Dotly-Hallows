@@ -18,8 +18,9 @@ void movedem1();
 void movedem2();
 void movedem3();
 void movebasil();
-
-int dementortime=270;
+void Harrydeadcheck();
+void lifecheck();
+int dementortime=340;
 int brickNum;
 int snitchesNum;
 int mazeHeight = 840;
@@ -40,6 +41,8 @@ char score[1000];
 int point=0;
 int life=3;
 bool harrydead=false;
+bool gameover=false;
+bool playgame=true;
 typedef struct{
 	int upInd, downInd, leftInd, rightInd;
     int x;
@@ -135,6 +138,9 @@ char dementordown[1][100]={"assets\\dementor\\downdementor.bmp"};
 char dementorup[1][100]={"assets\\dementor\\updementor.bmp"};
 char basiliskright[3][100]={"assets\\basilisk\\tile000.bmp","assets\\basilisk\\tile001.bmp","assets\\basilisk\\tile002.bmp"};
 char basiliskleft[3][100]={"assets\\basilisk\\left000.bmp","assets\\basilisk\\left001.bmp","assets\\basilisk\\left002.bmp"};
+char heart[1][100]={"assets\\heart\\000.bmp"};
+char harrydeadscene[1][100]={"assets\\harrydead\\000.bmp"};
+char gameoverscene[1][100]={"assets\\Gameover.bmp"};
 //int x=500, y = 300, r = 20;
 /*
 	function iDraw() is called again and again by the system.
@@ -146,41 +152,59 @@ void iDraw() {
 	//place your drawing codes here
 	iClear();
 	iShowBMP(0,0,BGImg[0]);
-	drawmaze();
+	if(playgame){
+		drawmaze();
+		Harrydeadcheck();
+		lifecheck();
+		if(life==3){
+			iShowBMP2(23,805,heart[0],0);
+			iShowBMP2(63,805,heart[0],0);
+			iShowBMP2(103,805,heart[0],0);
+		}
+		else if(life==2){
+			iShowBMP2(23,805,heart[0],0);
+			iShowBMP2(63,805,heart[0],0);
+		}
+		else if(life==1){
+			iShowBMP2(23,805,heart[0],0);
+		}
+		iText(590, 815, "SCORE: ",GLUT_BITMAP_HELVETICA_18);
+		sprintf(score,"%d",point);
+		iText(662, 815, score,GLUT_BITMAP_HELVETICA_18);
+		movedementor();
 
-	iText(590, 815, "SCORE: ",GLUT_BITMAP_HELVETICA_18);
-	sprintf(score,"%d",point);
-	iText(662, 815, score,GLUT_BITMAP_HELVETICA_18);
-	movedementor();
-
-	        if (harry.rightCount){
-                Harrymove();
-				iShowBMP2(harry.x, harry.y, harryright[harry.rightInd], 9283431);
-                }
-			else if (harry.leftCount){
-                Harrymove();
-				iShowBMP2(harry.x, harry.y, harryleft[harry.leftInd], 9283431);
-            }
-			else if (harry.upCount){
-                Harrymove();
-				iShowBMP2(harry.x, harry.y, harryup[harry.upInd], 9283431);
-            }
-			else if (harry.downCount){
-                Harrymove();
-				iShowBMP2(harry.x, harry.y, harrydown[harry.downInd], 9283431);
-            }
-			else{
-                Harrymove();
-                if(harry.lastcount==0)
-				    iShowBMP2(harry.x, harry.y, harryright[harry.rightInd], 9283431);
-                else if(harry.lastcount==1)
-				    iShowBMP2(harry.x, harry.y, harryleft[harry.leftInd], 9283431);
-                else if(harry.lastcount==2)
-                    iShowBMP2(harry.x, harry.y, harryup[harry.upInd], 9283431);
-                else
-                    iShowBMP2(harry.x, harry.y, harrydown[harry.downInd], 9283431);
-            }
-    }
+				if (harry.rightCount){
+					Harrymove();
+					iShowBMP2(harry.x, harry.y, harryright[harry.rightInd], 9283431);
+					}
+				else if (harry.leftCount){
+					Harrymove();
+					iShowBMP2(harry.x, harry.y, harryleft[harry.leftInd], 9283431);
+				}
+				else if (harry.upCount){
+					Harrymove();
+					iShowBMP2(harry.x, harry.y, harryup[harry.upInd], 9283431);
+				}
+				else if (harry.downCount){
+					Harrymove();
+					iShowBMP2(harry.x, harry.y, harrydown[harry.downInd], 9283431);
+				}
+				else{
+					Harrymove();
+					if(harry.lastcount==0)
+						iShowBMP2(harry.x, harry.y, harryright[harry.rightInd], 9283431);
+					else if(harry.lastcount==1)
+						iShowBMP2(harry.x, harry.y, harryleft[harry.leftInd], 9283431);
+					else if(harry.lastcount==2)
+						iShowBMP2(harry.x, harry.y, harryup[harry.upInd], 9283431);
+					else
+						iShowBMP2(harry.x, harry.y, harrydown[harry.downInd], 9283431);
+				}
+	}
+	if(gameover){
+		iShowBMP(0,0,gameoverscene[0]);
+	}
+}
 		
 	void harryinitial(){
 		harryNow[0]=19;
@@ -205,9 +229,9 @@ void iDraw() {
 			snitchesNum=0;
 			if(snitchCollected==187 && mazeLevel==0){
 				harryinitial();
-				harryNow[0]=19;
-				harryNow[1]=9;
+				dementorinitial();
 				mazeLevel=1;
+				dementortime=290;
 				//newgame(mazeLevel);
 			}
     for (int i = 20; i >= 0; i--) {
@@ -1511,6 +1535,39 @@ void Harrymove(){
 	}
 }
 
+void  Harrydeadcheck(){
+	if(harryNow[0]==dem1.now[0] && harryNow[1]==dem1.now[1]){
+		harrydead=true;
+	}
+	else if(harryNow[0]==dem2.now[0] && harryNow[1]==dem2.now[1]){
+		harrydead=true;
+	}
+	else if(harryNow[0]==dem3.now[0] && harryNow[1]==dem3.now[1]){
+		harrydead=true;
+	}
+	else if(harryNow[0]==basil.now[0] && harryNow[1]==basil.now[1]){
+		harrydead=true;
+	}
+}
+
+void lifecheck(){
+	if(harrydead){
+		harrydead=false;
+		iShowBMP2(harry.x,harry.y,harrydeadscene[0],0);
+		harryinitial();
+		dementorinitial();
+		if(life==3){
+			life=2;
+		}
+		else if(life==2){
+			life=1;
+		}
+		else if(life==1){
+			gameover=true;
+			playgame=false;
+		}
+	}
+}
 
 int main() {
 	harryinitial();
@@ -1519,7 +1576,8 @@ int main() {
 	iSetTimer(dementortime,movedem2);
 	iSetTimer(dementortime,movedem3);
 	iSetTimer(dementortime,movebasil);
-	//iSetTimer(10, checkTrigger);
+	// iSetTimer(10, Harrydeadcheck);
+	// iSetTimer(10,lifecheck);
 	//iSetTimer(harrytime,Harrymove);
 	//place your own initialization codes here.
 	iInitialize(screenwidth, screenheight, "Dotly Hallows");
