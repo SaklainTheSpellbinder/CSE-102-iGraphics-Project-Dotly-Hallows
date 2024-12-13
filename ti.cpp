@@ -23,6 +23,7 @@ void Harrydeadcheck();
 void lifecheck();
 void soundMoldy();
 void newgame();
+void target();
 int dementortime=340;
 int brickNum;
 int snitchesNum;
@@ -50,6 +51,8 @@ bool mainmenu=true;
 bool musicOn=true;
 bool deaddialouge=false;
 bool powerup=false;
+int power_counter=0;
+int morse_na_morenai[4]={0,0,0,0};
 bool instructions=false;
 bool HallOfFame=false;
 typedef struct{
@@ -1705,6 +1708,88 @@ void newgame(){
 		}
 	}
 }
+
+#define MAX_ENTRIES 100
+#define MAX_DISPLAYED_SCORES 3
+
+struct ScoreEntry {
+    char name[100];
+    int score;
+};
+
+int compareScores(const void* a, const void* b) {
+    const struct ScoreEntry* scoreA = (const struct ScoreEntry*)a;
+    const struct ScoreEntry* scoreB = (const struct ScoreEntry*)b;
+
+    // Descending order: Higher scores first
+    return scoreB->score - scoreA->score;
+}
+
+void appendScoreToFile(const char* name, int score) {
+    FILE *file = fopen("assets//High_Score.txt", "a");
+    if (file) {
+        fprintf(file, "%s: %d\n", name, score);
+        fclose(file);
+    } else {
+        printf("Error: Could not open High_Score.txt for appending.\n");
+    }
+}
+
+void sortScoresInFile() {
+    FILE *file = fopen("assets//High_Score.txt", "r");
+    if (!file) {
+        printf("Error: Could not open High_Score.txt for reading.\n");
+        return;
+    }
+
+    struct ScoreEntry scores[MAX_ENTRIES];
+    int count = 0;
+
+    while (fscanf(file, " %99[^:]: %d\n", scores[count].name, &scores[count].score) != EOF && count < MAX_ENTRIES) {
+        count++;
+    }
+    fclose(file);
+
+    qsort(scores, count, sizeof(struct ScoreEntry), compareScores);
+
+    file = fopen("assets//High_Score.txt", "w");
+    if (!file) {
+        printf("Error: Could not open High_Score.txt for writing.\n");
+        return;
+    }
+
+    for (int i = 0; i < count; i++) {
+        fprintf(file, "%s: %d\n", scores[i].name, scores[i].score);
+    }
+    fclose(file);
+}
+
+void showHighScore() {
+    FILE *file = fopen("assets//High_Score.txt", "r");
+    if (!file) {
+        printf("Error: Could not open High_Score.txt for displaying high scores.\n");
+        return;
+    }
+
+    int yPosition = 495;
+    char name[100];
+    int score;
+    int displayed = 0;
+
+    iShowBMP2(0, 0, "assets//HallOfFame.bmp", 0);
+
+    while (fscanf(file, " %99[^:]: %d\n", name, &score) == 2 && displayed < MAX_DISPLAYED_SCORES) {
+        char displayText[150];
+        sprintf(displayText, "%d. %s: %d", displayed + 1, name, score);
+        iSetColor(0, 0, 255);
+        iText(530, yPosition, displayText, GLUT_BITMAP_HELVETICA_18);
+        yPosition -= 70;
+        displayed++;
+    }
+
+    fclose(file);
+}
+
 
 int main() {
 	harryinitial();
