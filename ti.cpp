@@ -18,6 +18,7 @@ void movedem1();
 void movedem2();
 void movedem3();
 void movebasil();
+
 int dementortime=270;
 int brickNum;
 int snitchesNum;
@@ -38,6 +39,7 @@ int snitchCollected=0;
 char score[1000];
 int point=0;
 int life=3;
+bool harrydead=false;
 typedef struct{
 	int upInd, downInd, leftInd, rightInd;
     int x;
@@ -79,7 +81,7 @@ int maze[3][21][19] =
 		0, 0, 0, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 0, 0, 0,
 		1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1,
 		1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1,
-		1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1,
+		1, 1, 1, 1, 2, 1, 2, 1, 1, 0, 1, 1, 2, 1, 2, 1, 1, 1, 1,
 		0, 0, 0, 1, 2, 1, 2, 2, 2, 2, 3, 2, 2, 1, 2, 1, 0, 0, 0,
 		1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1,
 		1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1,
@@ -102,7 +104,7 @@ int maze[3][21][19] =
 		1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1,
 		1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 1,
 		1, 2, 2, 2, 2, 1, 2, 1, 2, 3, 2, 1, 2, 1, 2, 2, 2, 2, 1,
-		1, 2, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 3, 1, 2, 1,
+		1, 2, 1, 2, 1, 1, 2, 1, 1, 0, 1, 1, 2, 1, 1, 3, 1, 2, 1,
 		1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1,
 		1, 2, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 2, 1,
 		1, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 1,
@@ -968,12 +970,17 @@ void movedem3(){
 				dem3.now[0]++;
                 dem3.y-=mazepixel;
             }
+			else if(dem3.target[1]<dem3.now[1] && NoWall(dem3.now,1)){
+				dem3.direction=1;
+				dem3.now[1]--;
+				dem3.x-=mazepixel;
+			}
             else if(dem3.target[0]<dem3.now[0] && NoWall(dem3.now,2)){
                 dem3.direction=2;
 				dem3.now[0]--;
                 dem3.y+=mazepixel;
             }
-			else if(dem3.target[1]<dem3.now[1] && NoWall(dem3.now,1)){
+			else if(NoWall(dem3.now,1)){
 				dem3.direction=1;
 				dem3.now[1]--;
 				dem3.x-=mazepixel;
@@ -988,28 +995,23 @@ void movedem3(){
 				dem3.now[0]--;
 				dem3.y+=mazepixel;
 			}
-			else if(NoWall(dem3.now,1)){
-				dem3.direction=1;
-				dem3.now[1]--;
-				dem3.x-=mazepixel;
-			}
         }
 		else if(NoWall(dem3.now,0)){
-			if(dem3.target[0]>dem3.now[0] && NoWall(dem3.now,3)){
-                dem3.direction=3;
-				dem3.now[0]++;
-                dem3.y-=mazepixel;
-            }
-            else if(dem3.target[0]<dem3.now[0] && NoWall(dem3.now,2)){
-                dem3.direction=2;
-				dem3.now[0]--;
-                dem3.y+=mazepixel;
-            }
-			else{
+			// if(dem3.target[0]>dem3.now[0] && NoWall(dem3.now,3)){
+            //     dem3.direction=3;
+			// 	dem3.now[0]++;
+            //     dem3.y-=mazepixel;
+            // }
+            // else if(dem3.target[0]<dem3.now[0] && NoWall(dem3.now,2)){
+            //     dem3.direction=2;
+			// 	dem3.now[0]--;
+            //     dem3.y+=mazepixel;
+            // }
+			//else{
 				dem3.direction=0;
 				dem3.now[1]++;
 				dem3.x+=mazepixel;
-			}
+			//}
 		}
     }
 
@@ -1029,47 +1031,47 @@ void movedem3(){
 				dem3.now[0]++;
                 dem3.y-=mazepixel;
             }
-            else if(dem3.target[0]<dem3.now[0] && NoWall(dem3.now,2)){
-                dem3.direction=2;
-				dem3.now[0]--;
-                dem3.y+=mazepixel;
-            }
 			else if(dem3.target[1]>dem3.now[1] && NoWall(dem3.now,0)){
 				dem3.direction=0;
 				dem3.now[1]++;
 				dem3.x+=mazepixel;
 			}
+            else if(dem3.target[0]<dem3.now[0] && NoWall(dem3.now,2)){
+                dem3.direction=2;
+				dem3.now[0]--;
+                dem3.y+=mazepixel;
+            }
 			else if(NoWall(dem3.now,3)){
 				dem3.direction=3;
 				dem3.now[0]++;
 				dem3.y-=mazepixel;
-			}
-			else if(NoWall(dem3.now,2)){
-				dem3.direction=2;
-				dem3.now[0]--;
-				dem3.y+=mazepixel;
 			}
 			else if(NoWall(dem3.now,0)){
 				dem3.direction=0;
 				dem3.now[1]++;
 				dem3.x+=mazepixel;
 			}
+			else if(NoWall(dem3.now,2)){
+				dem3.direction=2;
+				dem3.now[0]--;
+				dem3.y+=mazepixel;
+			}
         }
 		else if(NoWall(dem3.now,1)){
-			if(dem3.target[0]>dem3.now[0] && NoWall(dem3.now,3)){
-                dem3.direction=3;
-				dem3.now[0]++;
-                dem3.y-=mazepixel;
-            }
-            else if(dem3.target[0]<dem3.now[0] && NoWall(dem3.now,2)){
-                dem3.direction=2;
-				dem3.now[0]--;
-                dem3.y+=mazepixel;
-            }
-			else{
+			// if(dem3.target[0]>dem3.now[0] && NoWall(dem3.now,3)){
+            //     dem3.direction=3;
+			// 	dem3.now[0]++;
+            //     dem3.y-=mazepixel;
+            // }
+            // if(dem3.target[0]<dem3.now[0] && NoWall(dem3.now,2)){
+            //     dem3.direction=2;
+			// 	dem3.now[0]--;
+            //     dem3.y+=mazepixel;
+            // }
+			//else{
 				dem3.now[1]--;
 				dem3.x-=mazepixel;
-			}
+			//}
 		}
     }
 	
@@ -1090,30 +1092,30 @@ void movedem3(){
 				dem3.now[1]++;
 				dem3.x+=mazepixel;
 			}
-            else if(dem3.target[1]<dem3.now[1] && NoWall(dem3.now,1)){
-                dem3.direction=1;
-				dem3.now[1]--;
-                dem3.x-=mazepixel;
-            }
 			else if(dem3.target[0]>dem3.now[0] && NoWall(dem3.now,3)){
                 dem3.direction=3;
 				dem3.now[0]++;
                 dem3.y-=mazepixel;
+            }
+            else if(dem3.target[1]<dem3.now[1] && NoWall(dem3.now,1)){
+                dem3.direction=1;
+				dem3.now[1]--;
+                dem3.x-=mazepixel;
             }
 			else if(NoWall(dem3.now,1)){
 				dem3.direction=1;
 				dem3.now[1]--;
 				dem3.x-=mazepixel;
 			}
-			else if(NoWall(dem3.now,3)){
-				dem3.direction=3;
-				dem3.now[0]++;
-				dem3.y-=mazepixel;
-			}
 			else if(NoWall(dem3.now,0)){
 				dem3.direction=0;
 				dem3.now[1]++;
 				dem3.x+=mazepixel;
+			}
+			else if(NoWall(dem3.now,3)){
+				dem3.direction=3;
+				dem3.now[0]++;
+				dem3.y-=mazepixel;
 			}
         }
 		else if(NoWall(dem3.now,2)){
@@ -1135,17 +1137,22 @@ void movedem3(){
     }
 
 	else if(dem3.direction==3){
-		// if(dem3.target[1]>dem1.now[1] && NoWall(dem3.now,0)){
-		// 	dem3.direction=0;
-		// 	dem3.now[1]++;
-		// 	dem3.x+=mazepixel;	
-		// }
+		if(dem3.target[1]>dem1.now[1] && NoWall(dem3.now,0)){
+			dem3.direction=0;
+			dem3.now[1]++;
+			dem3.x+=mazepixel;	
+		}
         if(dem3.target[0]>dem3.now[0] && NoWall(dem3.now,3) ){
 			dem3.now[0]++;
             dem3.y-=mazepixel;
         }
         else if(!NoWall(dem3.now,3 )){
-            if(dem3.target[0]<dem3.now[0] && NoWall(dem3.now,2)){
+			if(dem3.target[1]>dem3.now[1] && NoWall(dem3.now,0)){
+				dem3.direction=0;
+				dem3.now[1]++;
+				dem3.x+=mazepixel;
+			}
+            else if(dem3.target[0]<dem3.now[0] && NoWall(dem3.now,2)){
                 dem3.direction=2;
 				dem3.now[0]--;
                 dem3.y+=mazepixel;
@@ -1155,20 +1162,15 @@ void movedem3(){
 				dem3.now[1]--;
                 dem3.x-=mazepixel;
             }
-			else if(dem3.target[1]>dem3.now[1] && NoWall(dem3.now,0)){
-				dem3.direction=0;
-				dem3.now[1]++;
-				dem3.x+=mazepixel;
+			else if(NoWall(dem3.now,2)){
+				dem3.direction=2;
+				dem3.now[0]--;
+				dem3.y+=mazepixel;
 			}
 			else if(NoWall(dem3.now,1)){
 				dem3.direction=1;
 				dem3.now[1]--;
 				dem3.x-=mazepixel;
-			}
-			else if(NoWall(dem3.now,2)){
-				dem3.direction=2;
-				dem3.now[0]--;
-				dem3.y+=mazepixel;
 			}
 			else if(NoWall(dem3.now,0)){
 				dem3.direction=0;
@@ -1315,12 +1317,7 @@ void movebasil(){
     }
 	
 	else if(basil.direction==2){
-		if(basil.target[1]<basil.now[1] && NoWall(basil.now,1)){
-			basil.direction=1;
-			basil.now[1]--;
-			basil.x-=mazepixel;	
-		}
-        else if(basil.target[0]<basil.now[0] && NoWall(basil.now,2) ){
+        if(basil.target[0]<basil.now[0] && NoWall(basil.now,2) ){
 			basil.direction=2;
 			basil.now[0]--;
             basil.y+=mazepixel;
@@ -1358,20 +1355,20 @@ void movebasil(){
 			}
         }
 		else if(NoWall(basil.now,2)){
-			if(basil.target[1]>basil.now[1] && NoWall(basil.now,0)){
-				basil.direction=0;
-				basil.now[1]++;
-				basil.x+=mazepixel;
-			}
-			else if(basil.target[1]<basil.now[1] && NoWall(basil.now,1)){
-                basil.direction=1;
-				basil.now[1]--;
-                basil.x-=mazepixel;
-            }
-			else{
+			// if(basil.target[1]>basil.now[1] && NoWall(basil.now,0)){
+			// 	basil.direction=0;
+			// 	basil.now[1]++;
+			// 	basil.x+=mazepixel;
+			// }
+			// else if(basil.target[1]<basil.now[1] && NoWall(basil.now,1)){
+            //     basil.direction=1;
+			// 	basil.now[1]--;
+            //     basil.x-=mazepixel;
+            // }
+			//else{
 				basil.now[0]--;
 				basil.y+=mazepixel;
-			}
+			//}
 		}
     }
 
@@ -1386,30 +1383,30 @@ void movebasil(){
             basil.y-=mazepixel;
         }
         else if(!NoWall(basil.now,3 )){
-            if(basil.target[0]<basil.now[0] && NoWall(basil.now,2)){
-                basil.direction=2;
-				basil.now[0]--;
-                basil.y+=mazepixel;
-            }
+			if(basil.target[1]>basil.now[1] && NoWall(basil.now,0)){
+				basil.direction=0;
+				basil.now[1]++;
+				basil.x+=mazepixel;
+			}
             else if(basil.target[1]<basil.now[1] && NoWall(basil.now,1)){
                 basil.direction=1;
 				basil.now[1]--;
                 basil.x-=mazepixel;
             }
-			else if(basil.target[1]>basil.now[1] && NoWall(basil.now,0)){
-				basil.direction=0;
-				basil.now[1]++;
-				basil.x+=mazepixel;
+			else if(basil.target[0]<basil.now[0] && NoWall(basil.now,2)){
+                basil.direction=2;
+				basil.now[0]--;
+                basil.y+=mazepixel;
+            }
+			else if(NoWall(basil.now,2)){
+				basil.direction=2;
+				basil.now[0]--;
+				basil.y+=mazepixel;
 			}
 			else if(NoWall(basil.now,1)){
 				basil.direction=1;
 				basil.now[1]--;
 				basil.x-=mazepixel;
-			}
-			else if(NoWall(basil.now,2)){
-				basil.direction=2;
-				basil.now[0]--;
-				basil.y+=mazepixel;
 			}
 			else if(NoWall(basil.now,0)){
 				basil.direction=0;
@@ -1418,20 +1415,20 @@ void movebasil(){
 			}
         }
 		else if(NoWall(basil.now,3)){
-			if(basil.target[1]>basil.now[1] && NoWall(basil.now,0)){
-				basil.direction=0;
-				basil.now[1]++;
-				basil.x+=mazepixel;
-			}
-			else if(basil.target[1]<basil.now[1] && NoWall(basil.now,1)){
-                basil.direction=1;
-				basil.now[1]--;
-                basil.x-=mazepixel;
-            }
-			else{
+			// if(basil.target[1]>basil.now[1] && NoWall(basil.now,0)){
+			// 	basil.direction=0;
+			// 	basil.now[1]++;
+			// 	basil.x+=mazepixel;
+			// }
+			// else if(basil.target[1]<basil.now[1] && NoWall(basil.now,1)){
+            //     basil.direction=1;
+			// 	basil.now[1]--;
+            //     basil.x-=mazepixel;
+            // }
+			//else{
 				basil.now[0]++;
 				basil.y-=mazepixel;
-			}
+			//}
 		}
     }	
 }
@@ -1520,6 +1517,8 @@ int main() {
 	dementorinitial();
 	iSetTimer(dementortime,movedem1);
 	iSetTimer(dementortime,movedem2);
+	iSetTimer(dementortime,movedem3);
+	iSetTimer(dementortime,movebasil);
 	//iSetTimer(10, checkTrigger);
 	//iSetTimer(harrytime,Harrymove);
 	//place your own initialization codes here.
