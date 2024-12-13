@@ -3,6 +3,7 @@
 #include<stdlib.h>
 #include<stdbool.h>
 #include<Windows.h>
+#include<iostream>
 #define screenheight 850
 #define screenwidth 800
 #define mazepixel 40// all of the sprites...harry demnetors....snitches eveerything is 40*40
@@ -20,6 +21,7 @@ void movedem3();
 void movebasil();
 void Harrydeadcheck();
 void lifecheck();
+void soundMoldy();
 int dementortime=340;
 int brickNum;
 int snitchesNum;
@@ -42,7 +44,11 @@ int point=0;
 int life=3;
 bool harrydead=false;
 bool gameover=false;
-bool playgame=true;
+bool playgame=false;
+bool mainmenu=true;
+bool musicOn=true;
+bool deaddialouge=false;
+bool powerup=false;
 typedef struct{
 	int upInd, downInd, leftInd, rightInd;
     int x;
@@ -125,13 +131,13 @@ int maze[3][21][19] =
     }
 };
 
-char BGImg[4][30] = {"assets\\BG3.bmp"};
-char mazeWall[2][30]={"assets\\wall.bmp"};
+char BGImg[4][30] = {"assets\\BG2.bmp","assets\\BG3.bmp"};
+char mazeWall[2][30]={"assets\\wall.bmp","assets\\tree.bmp"};
 char snitch[2][39]={"assets\\snitch4.bmp","assets\\Sortinghat2.bmp"};
-char harrydown[9][100]={"assets\\harry2\\tile001.bmp","assets\\harry2\\tile002.bmp"};
-char harryup[9][100]={"assets\\harry2\\tile009.bmp","assets\\harry2\\tile010.bmp"};
-char harryright[9][100]={"assets\\harry2\\tile027.bmp","assets\\harry2\\tile028.bmp"};
-char harryleft[9][100]={"assets\\harry2\\tile018.bmp","assets\\harry2\\tile019.bmp"};
+char harrydown[9][100]={"assets\\harry3\\tile001.bmp","assets\\harry3\\tile002.bmp"};
+char harryup[9][100]={"assets\\harry3\\tile009.bmp","assets\\harry3\\tile010.bmp"};
+char harryright[9][100]={"assets\\harry3\\tile027.bmp","assets\\harry3\\tile028.bmp"};
+char harryleft[9][100]={"assets\\harry3\\tile018.bmp","assets\\harry3\\tile019.bmp"};
 char dementorright[1][100]={"assets\\dementor\\rightdementor.bmp"};
 char dementorleft[1][100]={"assets\\dementor\\leftdementor.bmp"};
 char dementordown[1][100]={"assets\\dementor\\downdementor.bmp"};
@@ -141,6 +147,7 @@ char basiliskleft[3][100]={"assets\\basilisk\\left000.bmp","assets\\basilisk\\le
 char heart[1][100]={"assets\\heart\\000.bmp"};
 char harrydeadscene[1][100]={"assets\\harrydead\\000.bmp"};
 char gameoverscene[1][100]={"assets\\Gameover.bmp"};
+char mainmenuscene[1][100]={"assets\\mainmenu.bmp"};
 //int x=500, y = 300, r = 20;
 /*
 	function iDraw() is called again and again by the system.
@@ -152,6 +159,9 @@ void iDraw() {
 	//place your drawing codes here
 	iClear();
 	iShowBMP(0,0,BGImg[0]);
+	if(mainmenu){
+		iShowBMP(0,0,mainmenuscene[0]);
+	}
 	if(playgame){
 		drawmaze();
 		Harrydeadcheck();
@@ -175,30 +185,30 @@ void iDraw() {
 
 				if (harry.rightCount){
 					Harrymove();
-					iShowBMP2(harry.x, harry.y, harryright[harry.rightInd], 0);
+					iShowBMP2(harry.x, harry.y, harryright[harry.rightInd], 16777215);
 					}
 				else if (harry.leftCount){
 					Harrymove();
-					iShowBMP2(harry.x, harry.y, harryleft[harry.leftInd], 0);
+					iShowBMP2(harry.x, harry.y, harryleft[harry.leftInd], 16777215);
 				}
 				else if (harry.upCount){
 					Harrymove();
-					iShowBMP2(harry.x, harry.y, harryup[harry.upInd], 0);
+					iShowBMP2(harry.x, harry.y, harryup[harry.upInd], 16777215);
 				}
 				else if (harry.downCount){
 					Harrymove();
-					iShowBMP2(harry.x, harry.y, harrydown[harry.downInd], 0);
+					iShowBMP2(harry.x, harry.y, harrydown[harry.downInd], 16777215);
 				}
 				else{
 					Harrymove();
 					if(harry.lastcount==0)
-						iShowBMP2(harry.x, harry.y, harryright[harry.rightInd], 0);
+						iShowBMP2(harry.x, harry.y, harryright[harry.rightInd], 16777215);
 					else if(harry.lastcount==1)
-						iShowBMP2(harry.x, harry.y, harryleft[harry.leftInd], 0);
+						iShowBMP2(harry.x, harry.y, harryleft[harry.leftInd], 16777215);
 					else if(harry.lastcount==2)
-						iShowBMP2(harry.x, harry.y, harryup[harry.upInd], 0);
+						iShowBMP2(harry.x, harry.y, harryup[harry.upInd], 16777215);
 					else
-						iShowBMP2(harry.x, harry.y, harrydown[harry.downInd], 0);
+						iShowBMP2(harry.x, harry.y, harrydown[harry.downInd], 16777215);
 				}
 	}
 	if(gameover){
@@ -240,7 +250,7 @@ void iDraw() {
 				brickNum=c++;
                 mazeXcor[brickNum] = mazepixel * j;
                 mazeYcor[brickNum] = mazepixel * (20-i);
-				iShowBMP(mazeX + mazeXcor[brickNum], mazeY + mazeYcor[brickNum], mazeWall[0]);
+				iShowBMP(mazeX + mazeXcor[brickNum], mazeY + mazeYcor[brickNum], mazeWall[1]);
 			}
 			else if(maze[mazeLevel][i][j]==2)
 				{
@@ -284,6 +294,12 @@ void iMouseMove(int mx, int my) {
 	*/
 void iMouse(int button, int state, int mx, int my) {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+		if(mainmenu){
+			if((mx>=337 && mx<=460) && (my>=302 && my<=380)){
+				mainmenu=false;
+				playgame=true;
+			}
+		}
 		//place your codes here
 		//	printf("x = %d, y= %d\n",mx,my);
 		// x += 10;
@@ -1536,16 +1552,16 @@ void Harrymove(){
 }
 
 void  Harrydeadcheck(){
-	if(harryNow[0]==dem1.now[0] && harryNow[1]==dem1.now[1]){
+	if(harryNow[0]==dem1.now[0] && harryNow[1]==dem1.now[1] && harrydead==false){
 		harrydead=true;
 	}
-	else if(harryNow[0]==dem2.now[0] && harryNow[1]==dem2.now[1]){
+	else if(harryNow[0]==dem2.now[0] && harryNow[1]==dem2.now[1] && harrydead==false){
 		harrydead=true;
 	}
-	else if(harryNow[0]==dem3.now[0] && harryNow[1]==dem3.now[1]){
+	else if(harryNow[0]==dem3.now[0] && harryNow[1]==dem3.now[1] && harrydead==false){
 		harrydead=true;
 	}
-	else if(harryNow[0]==basil.now[0] && harryNow[1]==basil.now[1]){
+	else if(harryNow[0]==basil.now[0] && harryNow[1]==basil.now[1] && harrydead==false){
 		harrydead=true;
 	}
 }
@@ -1565,7 +1581,24 @@ void lifecheck(){
 		else if(life==1){
 			gameover=true;
 			playgame=false;
+			if(musicOn){
+				musicOn=false;
+				PlaySound(0,0,0);
+				deaddialouge=true;
+				if(deaddialouge){
+				PlaySound(TEXT("assets\\sound\\youknowwho.WAV"), NULL,SND_ASYNC );
+				}
+			}
 		}
+	}
+}
+
+void soundMoldy(){
+	if(musicOn){
+		PlaySound(TEXT("assets\\sound\\gamesound.WAV"), NULL,SND_LOOP | SND_ASYNC );
+	}
+	if(deaddialouge){
+		PlaySound(TEXT("assets\\sound\\youknowwho.WAV"), NULL,SND_ASYNC );
 	}
 }
 
@@ -1576,6 +1609,7 @@ int main() {
 	iSetTimer(dementortime,movedem2);
 	iSetTimer(dementortime,movedem3);
 	iSetTimer(dementortime,movebasil);
+	soundMoldy();
 	// iSetTimer(10, Harrydeadcheck);
 	// iSetTimer(10,lifecheck);
 	//iSetTimer(harrytime,Harrymove);
