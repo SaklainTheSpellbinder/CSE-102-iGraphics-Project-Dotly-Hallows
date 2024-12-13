@@ -27,7 +27,7 @@ int mazeHeight = 840;
 int mazeWidth = 760;
 int mazeX = (screenwidth / 2) - (mazeWidth / 2)+3;
 int mazeY = (screenheight / 2) - (mazeHeight / 2)-5;
-int mazeLevel = 0;
+int mazeLevel = 1;
 int mazeXcor[200];
 int mazeYcor[200];
 int snitchXcor[210][2];
@@ -125,8 +125,8 @@ int maze[3][21][19] =
     }
 };
 
-char BGImg[4][30] = {"assets\\BG2.bmp"};
-char mazeWall[2][30]={"assets\\tree.bmp"};
+char BGImg[4][30] = {"assets\\BG3.bmp"};
+char mazeWall[2][30]={"assets\\wall.bmp"};
 char snitch[2][39]={"assets\\snitch4.bmp","assets\\Sortinghat2.bmp"};
 char harrydown[9][100]={"assets\\harry\\tile001.bmp","assets\\harry\\tile002.bmp"};
 char harryup[9][100]={"assets\\harry\\tile009.bmp","assets\\harry\\tile010.bmp"};
