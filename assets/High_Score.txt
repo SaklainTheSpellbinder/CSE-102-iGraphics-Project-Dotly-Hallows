@@ -1,6 +1,7 @@
 Saklain: 384
 akib: 321
 Saklain: 208
+Arana: 206
 Saklain: 201
 SaklainTheValoManush: 200
 Saklain: 194
@@ -11,7 +12,9 @@ SaklainTheNoob: 168
 Saklain: 158
 SaklainTheNoob: 151
 Saklain: 150
+Saklain': 129
 Saklain: 127
+Saklain: 117
 Saklain: 95
 Saklain: 93
 Saklain: 90
@@ -27,4 +30,3 @@ Saklain: 17
 Saklain: 1
 Saklain: 1
 Saklain: 1
-Saklain': 129
