@@ -32,6 +32,7 @@ void timeID();
 void appendScoreToFile(const char* name, int score);
 void sortScoresInFile();
 void showHighScore();
+//void hatpassing();
 int compareScores(const void *a, const void *b);
 int dementortime=340;
 int brickNum;
@@ -2270,6 +2271,107 @@ void update(){
 	movebasil();
 	targetchange();
 }
+
+// void hatpassing(){
+// 	srand(time(0));
+// 	int r=rand()%4;
+// 	// right=0
+// 	// left=1
+// 	// up=2
+// 	// down=3
+// 	for(int i=0;i<21;i++){
+// 		for(int j=0;j<19;j++){
+// 			if(r==0){
+// 				if(maze[mazeLevel][i][j+1]!=1){
+// 					int temp=maze[mazeLevel][i][j];
+// 					maze[mazeLevel][i][j]=maze[mazeLevel][i][j+1];
+// 					maze[mazeLevel][i][j+1]=temp;
+// 				}
+// 				// else if(maze[mazeLevel][i][j-1]!=1){
+// 				// 	int temp=maze[mazeLevel][i][j];
+// 				// 	maze[mazeLevel][i][j]=maze[mazeLevel][i][j-1];
+// 				// 	maze[mazeLevel][i][j-1]=temp;
+// 				// }
+// 				// else if(maze[mazeLevel][i+1][j]!=1){
+// 				// 	int temp=maze[mazeLevel][i][j];
+// 				// 	maze[mazeLevel][i][j]=maze[mazeLevel][i+1][j];
+// 				// 	maze[mazeLevel][i+1][j]=temp;
+// 				// }
+// 				// else if(maze[mazeLevel][i-1][j]!=1){
+// 				// 	int temp=maze[mazeLevel][i][j];
+// 				// 	maze[mazeLevel][i][j]=maze[mazeLevel][i-1][j];
+// 				// 	maze[mazeLevel][i-1][j]=temp;
+// 				// }
+// 			}
+// 			if(r==1){
+// 				if(maze[mazeLevel][i][j-1]!=1){
+// 					int temp=maze[mazeLevel][i][j];
+// 					maze[mazeLevel][i][j]=maze[mazeLevel][i][j-1];
+// 					maze[mazeLevel][i][j-1]=temp;
+// 				}
+// 				// else if(maze[mazeLevel][i][j+1]!=1){
+// 				// 	int temp=maze[mazeLevel][i][j];
+// 				// 	maze[mazeLevel][i][j]=maze[mazeLevel][i][j+1];
+// 				// 	maze[mazeLevel][i][j+1]=temp;
+// 				// }
+// 				// else if(maze[mazeLevel][i+1][j]!=1){
+// 				// 	int temp=maze[mazeLevel][i][j];
+// 				// 	maze[mazeLevel][i][j]=maze[mazeLevel][i+1][j];
+// 				// 	maze[mazeLevel][i+1][j]=temp;
+// 				// }
+// 				// else if(maze[mazeLevel][i-1][j]!=1){
+// 				// 	int temp=maze[mazeLevel][i][j];
+// 				// 	maze[mazeLevel][i][j]=maze[mazeLevel][i-1][j];
+// 				// 	maze[mazeLevel][i-1][j]=temp;
+// 				// }
+// 			}
+// 			if(r==2){
+// 				if(maze[mazeLevel][i-1][j]!=1){
+// 					int temp=maze[mazeLevel][i][j];
+// 					maze[mazeLevel][i][j]=maze[mazeLevel][i-1][j];
+// 					maze[mazeLevel][i-1][j]=temp;
+// 				}
+// 				// else if(maze[mazeLevel][i][j-1]!=1){
+// 				// 	int temp=maze[mazeLevel][i][j];
+// 				// 	maze[mazeLevel][i][j]=maze[mazeLevel][i][j-1];
+// 				// 	maze[mazeLevel][i][j-1]=temp;
+// 				// }
+// 				// else if(maze[mazeLevel][i][j+1]!=1){
+// 				// 	int temp=maze[mazeLevel][i][j];
+// 				// 	maze[mazeLevel][i][j]=maze[mazeLevel][i][j+1];
+// 				// 	maze[mazeLevel][i][j+1]=temp;
+// 				// }
+// 				// else if(maze[mazeLevel][i+1][j]!=1){
+// 				// 	int temp=maze[mazeLevel][i][j];
+// 				// 	maze[mazeLevel][i][j]=maze[mazeLevel][i+1][j];
+// 				// 	maze[mazeLevel][i+1][j]=temp;
+// 				// }
+// 			}
+// 			if(r==3){
+// 				if(maze[mazeLevel][i+1][j]!=1){
+// 					int temp=maze[mazeLevel][i][j];
+// 					maze[mazeLevel][i][j]=maze[mazeLevel][i+1][j];
+// 					maze[mazeLevel][i+1][j]=temp;
+// 				}
+// 				// else if(maze[mazeLevel][i-1][j]!=1){
+// 				// 	int temp=maze[mazeLevel][i][j];
+// 				// 	maze[mazeLevel][i][j]=maze[mazeLevel][i-1][j];
+// 				// 	maze[mazeLevel][i-1][j]=temp;
+// 				// }
+// 				// else if(maze[mazeLevel][i][j-1]!=1){
+// 				// 	int temp=maze[mazeLevel][i][j];
+// 				// 	maze[mazeLevel][i][j]=maze[mazeLevel][i][j-1];
+// 				// 	maze[mazeLevel][i][j-1]=temp;
+// 				// }
+// 				// else if(maze[mazeLevel][i][j+1]!=1){
+// 				// 	int temp=maze[mazeLevel][i][j];
+// 				// 	maze[mazeLevel][i][j]=maze[mazeLevel][i][j+1];
+// 				// 	maze[mazeLevel][i][j+1]=temp;
+// 				// }
+// 			}
+// 		}
+// 	}
+// }
 
 int main() {
 	harryinitial();

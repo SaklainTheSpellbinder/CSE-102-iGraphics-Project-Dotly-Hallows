@@ -80,12 +80,11 @@ int timerID;
 int indexnumber=0;
 int poweruptime=9;
 char str[1000]="";
+bool totalsound=true;
 
 #define MAX_ENTRIES 100
 #define MAX_DISPLAYED_SCORES 3
-
 #define MAX_LINE_LENGTH 100
-
 typedef struct {
     char name[MAX_LINE_LENGTH];
     int score;
@@ -123,27 +122,27 @@ move harry;
 int original[3][21][19] =
 {
 	{
-		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-		1, 2, 2, 3, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1,
-		1, 2, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 2, 1,
-		1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 2, 2, 1,
-		1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1,
-		1, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 1,
-		1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 3, 1, 1, 1, 2, 1, 1, 1, 1,
-		0, 0, 0, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 0, 0, 0,
-		1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1,
-		1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1,
-		1, 1, 1, 1, 2, 1, 2, 1, 1, 0, 1, 1, 2, 1, 2, 1, 1, 1, 1,
-		0, 0, 0, 1, 2, 1, 2, 2, 2, 2, 3, 2, 2, 1, 2, 1, 0, 0, 0,
-		1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1,
-		1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1,
-		1, 2, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 2, 1, 2, 1, 1, 2, 1,
-		1, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 1,
-		1, 1, 3, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 1, 1,
-		1, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 3, 2, 2, 1,
-		1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1,
-		1, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 1,
-		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+		1,2,2,3,2,2,2,2,2,1,2,2,2,2,2,2,2,2,1,
+		1,2,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,2,1,
+		1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,2,2,1,
+		1,2,1,1,2,1,2,1,1,1,1,1,2,1,2,1,1,2,1,
+		1,2,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,2,1,
+		1,1,1,1,2,1,1,1,2,1,3,1,1,1,2,1,1,1,1,
+		0,0,0,1,2,1,2,2,2,2,2,2,2,1,2,1,0,0,0,
+		1,1,1,1,2,1,2,1,1,2,1,1,2,1,2,1,1,1,1,
+		1,2,2,2,2,2,2,1,2,2,2,1,2,2,2,2,2,2,1,
+		1,1,1,1,2,1,2,1,1,0,1,1,2,1,2,1,1,1,1,
+		0,0,0,1,2,1,2,2,2,2,3,2,2,1,2,1,0,0,0,
+		1,1,1,1,2,1,2,1,1,1,1,1,2,1,2,1,1,1,1,
+		1,2,2,2,2,2,3,2,2,1,2,2,2,2,2,2,2,2,1,
+		1,2,1,1,2,1,1,1,2,1,2,1,2,1,2,1,1,2,1,
+		1,2,2,1,2,2,2,2,2,2,2,2,2,2,2,1,2,2,1,
+		1,1,2,1,2,1,2,1,1,1,1,1,2,1,2,1,2,1,1,
+		1,2,2,2,2,1,2,2,2,1,2,2,2,1,2,3,2,2,1,
+		1,2,1,1,1,1,1,1,2,1,2,1,1,1,1,1,1,2,1,
+		1,2,2,2,2,2,2,2,2,0,2,2,2,2,2,2,2,2,1,
+		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 	},
 	{
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -291,6 +290,7 @@ char deaddementor[1][100]={"assets\\dead\\deaddementor.bmp"};
 char gamewinscene[1][100]={"assets\\GameWin.bmp"};
 char HallOfFamescene[1][100]={"assets\\HallOfFame.bmp"};
 char nameinputscene[1][100]={"assets\\NameInput.bmp"};
+char soundscene[2][100]={"assets\\pic\\On.bmp","assets\\pic\\off.bmp"};
 //int x=500, y = 300, r = 20;
 /*
 	function iDraw() is called again and again by the system.
@@ -304,6 +304,10 @@ void iDraw() {
 	iShowBMP(0,0,BGImg[0]);
 	if(mainmenu){
 		iShowBMP(0,0,mainmenuscene[0]);
+		if(totalsound)
+			iShowBMP2(720,770,soundscene[0],0);
+		else
+			iShowBMP2(720,770,soundscene[1],0);
 	}
 	if(HallOfFame){
 		iShowBMP(0,0,HallOfFamescene[0]);
@@ -499,6 +503,18 @@ void iMouse(int button, int state, int mx, int my) {
 				mainmenu=false;
 				HallOfFame=true;
 			}
+			if((mx>=720 && mx<=800) && (my>=770 && my<=850)){
+				if(totalsound){
+					totalsound=false;
+					musicOn=false;
+					PlaySound(0,0,0);
+				}
+				else{
+					totalsound=true;
+					musicOn=true;
+					soundMoldy();
+				}
+			}
 		}
 		if(HallOfFame){
 			if((mx>=4 && mx<=114) && (my>=800 && my<=850)){
@@ -516,12 +532,14 @@ void iMouse(int button, int state, int mx, int my) {
 			if((mx>=277 && mx<=517) && (my>=207 && my<=281)){
 				gameover=false;
 				mainmenu=true;
-				if(deaddialouge){
-					deaddialouge=false;
-					PlaySound(0,0,0);
-					musicOn=true;
-					if(musicOn){
-						PlaySound(TEXT("assets\\sound\\gamesound.WAV"), NULL,SND_LOOP | SND_ASYNC );
+				if(totalsound){
+					if(deaddialouge){
+						deaddialouge=false;
+						PlaySound(0,0,0);
+						musicOn=true;
+						if(musicOn){
+							PlaySound(TEXT("assets\\sound\\gamesound.WAV"), NULL,SND_LOOP | SND_ASYNC );
+						}
 					}
 				}
 			}
@@ -533,12 +551,14 @@ void iMouse(int button, int state, int mx, int my) {
 			if((mx>=249 && mx<=551) && (my>=146 && my<=235)){
 				gamewin=false;
 				mainmenu=true;
-				if(gamewinsound){
-					gamewinsound=false;
-					PlaySound(0,0,0);
-					musicOn=true;
-					if(musicOn){
-						PlaySound(TEXT("assets\\sound\\gamesound.WAV"), NULL,SND_LOOP | SND_ASYNC );
+				if(totalsound){
+					if(gamewinsound){
+						gamewinsound=false;
+						PlaySound(0,0,0);
+						musicOn=true;
+						if(musicOn){
+							PlaySound(TEXT("assets\\sound\\gamesound.WAV"), NULL,SND_LOOP | SND_ASYNC );
+						}
 					}
 				}
 			}
@@ -1939,12 +1959,14 @@ void Harrymove(){
 		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==5){
 			gamewin=true;
 			playgame=false;
-			if(musicOn){
-				musicOn=false;
-				PlaySound(0,0,0);
-				gamewinsound=true;
-				if(gamewinsound){
-				PlaySound(TEXT("assets\\sound\\aveda.WAV"), NULL,SND_ASYNC );
+			if(totalsound){
+				if(musicOn){
+					musicOn=false;
+					PlaySound(0,0,0);
+					gamewinsound=true;
+					if(gamewinsound){
+					PlaySound(TEXT("assets\\sound\\aveda.WAV"), NULL,SND_ASYNC );
+					}
 				}
 			}
 		}
@@ -1972,12 +1994,14 @@ void Harrymove(){
 		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==5){
 			gamewin=true;
 			playgame=false;
-			if(musicOn){
-				musicOn=false;
-				PlaySound(0,0,0);
-				gamewinsound=true;
-				if(gamewinsound){
-				PlaySound(TEXT("assets\\sound\\aveda.WAV"), NULL,SND_ASYNC );
+			if(totalsound){
+				if(musicOn){
+					musicOn=false;
+					PlaySound(0,0,0);
+					gamewinsound=true;
+					if(gamewinsound){
+					PlaySound(TEXT("assets\\sound\\aveda.WAV"), NULL,SND_ASYNC );
+					}
 				}
 			}
 		}
@@ -2005,12 +2029,14 @@ void Harrymove(){
 		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==5){
 			gamewin=true;
 			playgame=false;
-			if(musicOn){
-				musicOn=false;
-				PlaySound(0,0,0);
-				gamewinsound=true;
-				if(gamewinsound){
-				PlaySound(TEXT("assets\\sound\\aveda.WAV"), NULL,SND_ASYNC );
+			if(totalsound){
+				if(musicOn){
+					musicOn=false;
+					PlaySound(0,0,0);
+					gamewinsound=true;
+					if(gamewinsound){
+					PlaySound(TEXT("assets\\sound\\aveda.WAV"), NULL,SND_ASYNC );
+					}
 				}
 			}
 		}
@@ -2038,12 +2064,14 @@ void Harrymove(){
 		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==5){
 			gamewin=true;
 			playgame=false;
-			if(musicOn){
-				musicOn=false;
-				PlaySound(0,0,0);
-				gamewinsound=true;
-				if(gamewinsound){
-				PlaySound(TEXT("assets\\sound\\aveda.WAV"), NULL,SND_ASYNC );
+			if(totalsound){
+				if(musicOn){
+					musicOn=false;
+					PlaySound(0,0,0);
+					gamewinsound=true;
+					if(gamewinsound){
+					PlaySound(TEXT("assets\\sound\\aveda.WAV"), NULL,SND_ASYNC );
+					}
 				}
 			}
 		}
@@ -2123,12 +2151,14 @@ void lifecheck(){
 			appendScoreToFile(str, point);
 			printf("%s\n",str);
 			str[0]='\0';
-			if(musicOn){
-				musicOn=false;
-				PlaySound(0,0,0);
-				deaddialouge=true;
-				if(deaddialouge){
-				PlaySound(TEXT("assets\\sound\\youknowwho.WAV"), NULL,SND_ASYNC );
+			if(totalsound){
+				if(musicOn){
+					musicOn=false;
+					PlaySound(0,0,0);
+					deaddialouge=true;
+					if(deaddialouge){
+					PlaySound(TEXT("assets\\sound\\youknowwho.WAV"), NULL,SND_ASYNC );
+					}
 				}
 			}
 		}
@@ -2256,8 +2286,7 @@ void showHighScore() {
 void timerFunction() {
     timerCount++;
     printf("Timer Count: %d\n", timerCount);
-
-    if (timerCount >= poweruptime) {
+	if (timerCount >= poweruptime) {
         iPauseTimer(timerID); 
 		timerCount=0;
 		powerup=false;
@@ -2275,7 +2304,8 @@ int main() {
 	harryinitial();
 	dementorinitial();
 	iSetTimer(dementortime,update);
-	soundMoldy();
+	if(totalsound)
+		soundMoldy();
 	// iSetTimer(10, Harrydeadcheck);
 	// iSetTimer(10,lifecheck);
 	//iSetTimer(harrytime,Harrymove);
