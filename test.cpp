@@ -27,18 +27,22 @@ void timerFunction();
 void dem1deadtolife ();
 void dem2deadtolife ();
 void dem3deadtolife ();
+void playhatcollect();
 void update();
 void timeID();
+void playharrydead();
+void playdemendead();
 void appendScoreToFile(const char* name, int score);
 void sortScoresInFile();
 void showHighScore();
-//void hatpassing();
 int compareScores(const void *a, const void *b);
 int dementortime=340;
 int brickNum;
 int snitchesNum;
 int mazeHeight = 840;
 int mazeWidth = 760;
+int soundcount_exp1=0;
+int soundcount_exp2=0;
 int mazeX = (screenwidth / 2) - (mazeWidth / 2)+3;
 int mazeY = (screenheight / 2) - (mazeHeight / 2)-5;
 int mazeLevel = 0;
@@ -53,6 +57,7 @@ int deathtime=5;
 char score[1000];
 int point=0;
 int life=3;
+int soundcount_exp=0;
 bool harrydead=false;
 bool gameover=false;
 bool playgame=false;
@@ -81,12 +86,11 @@ int timerID;
 int indexnumber=0;
 int poweruptime=9;
 char str[1000]="";
+bool totalsound=true;
 
 #define MAX_ENTRIES 100
 #define MAX_DISPLAYED_SCORES 3
-
 #define MAX_LINE_LENGTH 100
-
 typedef struct {
     char name[MAX_LINE_LENGTH];
     int score;
@@ -124,50 +128,50 @@ move harry;
 int original[3][21][19] =
 {
 	{
-		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-		1, 2, 2, 3, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1,
-		1, 2, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 2, 1,
-		1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 2, 2, 1,
-		1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1,
-		1, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 1,
-		1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 3, 1, 1, 1, 2, 1, 1, 1, 1,
-		0, 0, 0, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 0, 0, 0,
-		1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1,
-		1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1,
-		1, 1, 1, 1, 2, 1, 2, 1, 1, 0, 1, 1, 2, 1, 2, 1, 1, 1, 1,
-		0, 0, 0, 1, 2, 1, 2, 2, 2, 2, 3, 2, 2, 1, 2, 1, 0, 0, 0,
-		1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1,
-		1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1,
-		1, 2, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 2, 1, 2, 1, 1, 2, 1,
-		1, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 1,
-		1, 1, 3, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 1, 1,
-		1, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 3, 2, 2, 1,
-		1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1,
-		1, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 1,
-		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+		1,2,2,3,2,2,2,2,2,1,2,2,2,2,2,2,2,2,1,
+		1,2,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,2,1,
+		1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,2,2,1,
+		1,2,1,1,2,1,2,1,1,1,1,1,2,1,2,1,1,2,1,
+		1,2,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,2,1,
+		1,1,1,1,2,1,1,1,2,1,3,1,1,1,2,1,1,1,1,
+		0,0,0,1,2,1,2,2,2,2,2,2,2,1,2,1,0,0,0,
+		1,1,1,1,2,1,2,1,1,2,1,1,2,1,2,1,1,1,1,
+		1,2,2,2,2,2,2,1,2,2,2,1,2,2,2,2,2,2,1,
+		1,1,1,1,2,1,2,1,1,0,1,1,2,1,2,1,1,1,1,
+		0,0,0,1,2,1,2,2,2,2,3,2,2,1,2,1,0,0,0,
+		1,1,1,1,2,1,2,1,1,1,1,1,2,1,2,1,1,1,1,
+		1,2,2,2,2,2,3,2,2,1,2,2,2,2,2,2,2,2,1,
+		1,2,1,1,2,1,1,1,2,1,2,1,2,1,2,1,1,2,1,
+		1,2,2,1,2,2,2,2,2,2,2,2,2,2,2,1,2,2,1,
+		1,1,2,1,2,1,2,1,1,1,1,1,2,1,2,1,2,1,1,
+		1,2,2,2,2,1,2,2,2,1,2,2,2,1,2,3,2,2,1,
+		1,2,1,1,1,1,1,1,2,1,2,1,1,1,1,1,1,2,1,
+		1,2,2,2,2,2,2,2,2,0,2,2,2,2,2,2,2,2,1,
+		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 	},
 	{
-		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-		1, 2, 3, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 3, 1,
-		1, 2, 1, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 1, 2, 1,
-		1, 2, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1, 2, 1,
-		1, 2, 2, 2, 1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 1, 2, 2, 2, 1,
-		1, 1, 1, 1, 1, 2, 2, 2, 2, 1, 3, 2, 2, 2, 1, 1, 1, 1, 1,
-		1, 2, 2, 2, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 2, 2, 1,
-		1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1,
-		1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 1,
-		1, 2, 2, 2, 2, 1, 2, 1, 2, 3, 2, 1, 2, 1, 2, 2, 2, 2, 1,
-		1, 2, 1, 2, 1, 1, 2, 1, 1, 0, 1, 1, 2, 1, 1, 3, 1, 2, 1,
-		1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1,
-		1, 2, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 2, 1,
-		1, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 1,
-		1, 1, 2, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 1, 1,
-		1, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 1, 2, 2, 1,
-		1, 2, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 2, 1,
-		1, 2, 3, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 1,
-		1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1,
-		1, 2, 2, 2, 2, 1, 2, 2, 2, 0, 2, 2, 2, 1, 2, 2, 2, 3, 1,
-		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+		1,2,3,2,2,2,1,2,2,2,2,2,1,2,2,2,2,3,1,
+		1,2,1,1,1,2,1,1,2,1,2,1,1,2,1,1,1,2,1,
+		1,2,1,2,2,2,2,2,2,1,2,2,2,2,2,2,1,2,1,
+		1,2,2,2,1,2,1,1,2,1,2,1,1,2,1,2,2,2,1,
+		1,1,1,1,1,2,2,2,2,1,3,2,2,2,1,1,1,1,1,
+		1,2,2,2,1,2,1,1,1,1,1,1,1,2,1,2,2,2,1,
+		1,2,1,2,2,2,2,2,2,2,2,2,2,2,2,2,1,2,1,
+		1,2,1,1,2,1,2,1,1,2,1,1,2,1,2,1,1,2,1,
+		1,2,2,2,2,1,2,1,2,3,2,1,2,1,2,2,2,2,1,
+		1,2,1,2,1,1,2,1,1,0,1,1,2,1,1,3,1,2,1,
+		1,2,1,2,2,2,2,2,2,2,2,2,2,2,2,2,1,2,1,
+		1,2,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,2,1,
+		1,2,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,2,1,
+		1,1,2,1,2,1,2,1,1,1,1,1,2,1,2,1,2,1,1,
+		1,2,2,1,2,2,2,2,2,2,2,2,2,2,3,1,2,2,1,
+		1,2,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,2,1,
+		1,2,3,2,2,1,2,2,2,1,2,2,2,1,2,2,2,2,1,
+		1,2,1,1,2,1,2,1,1,1,1,1,2,1,2,1,1,2,1,
+		1,2,2,2,2,1,2,2,2,0,2,2,2,1,2,2,2,3,1,
+		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 	}
     ,
     {
@@ -292,6 +296,7 @@ char deaddementor[1][100]={"assets\\dead\\deaddementor.bmp"};
 char gamewinscene[1][100]={"assets\\GameWin.bmp"};
 char HallOfFamescene[1][100]={"assets\\HallOfFame.bmp"};
 char nameinputscene[1][100]={"assets\\NameInput.bmp"};
+char soundscene[2][100]={"assets\\pic\\On.bmp","assets\\pic\\off.bmp"};
 //int x=500, y = 300, r = 20;
 /*
 	function iDraw() is called again and again by the system.
@@ -305,6 +310,10 @@ void iDraw() {
 	iShowBMP(0,0,BGImg[0]);
 	if(mainmenu){
 		iShowBMP(0,0,mainmenuscene[0]);
+		if(totalsound)
+			iShowBMP2(720,770,soundscene[0],0);
+		else
+			iShowBMP2(720,770,soundscene[1],0);
 	}
 	if(HallOfFame){
 		iShowBMP(0,0,HallOfFamescene[0]);
@@ -500,6 +509,18 @@ void iMouse(int button, int state, int mx, int my) {
 				mainmenu=false;
 				HallOfFame=true;
 			}
+			if((mx>=720 && mx<=800) && (my>=770 && my<=850)){
+				if(totalsound){
+					totalsound=false;
+					musicOn=false;
+					PlaySound(0,0,0);
+				}
+				else{
+					totalsound=true;
+					musicOn=true;
+					soundMoldy();
+				}
+			}
 		}
 		if(HallOfFame){
 			if((mx>=4 && mx<=114) && (my>=800 && my<=850)){
@@ -517,12 +538,14 @@ void iMouse(int button, int state, int mx, int my) {
 			if((mx>=277 && mx<=517) && (my>=207 && my<=281)){
 				gameover=false;
 				mainmenu=true;
-				if(deaddialouge){
-					deaddialouge=false;
-					PlaySound(0,0,0);
-					musicOn=true;
-					if(musicOn){
-						PlaySound(TEXT("assets\\sound\\gamesound.WAV"), NULL,SND_LOOP | SND_ASYNC );
+				if(totalsound){
+					if(deaddialouge){
+						deaddialouge=false;
+						PlaySound(0,0,0);
+						musicOn=true;
+						if(musicOn){
+							PlaySound(TEXT("assets\\sound\\gamesound.WAV"), NULL,SND_LOOP | SND_ASYNC );
+						}
 					}
 				}
 			}
@@ -534,12 +557,14 @@ void iMouse(int button, int state, int mx, int my) {
 			if((mx>=249 && mx<=551) && (my>=146 && my<=235)){
 				gamewin=false;
 				mainmenu=true;
-				if(gamewinsound){
-					gamewinsound=false;
-					PlaySound(0,0,0);
-					musicOn=true;
-					if(musicOn){
-						PlaySound(TEXT("assets\\sound\\gamesound.WAV"), NULL,SND_LOOP | SND_ASYNC );
+				if(totalsound){
+					if(gamewinsound){
+						gamewinsound=false;
+						PlaySound(0,0,0);
+						musicOn=true;
+						if(musicOn){
+							PlaySound(TEXT("assets\\sound\\gamesound.WAV"), NULL,SND_LOOP | SND_ASYNC );
+						}
 					}
 				}
 			}
@@ -566,28 +591,29 @@ void iMouse(int button, int state, int mx, int my) {
 void iKeyboard(unsigned char key) {
 	printf("Key pressed: %c (%d)\n", key, key);
 	if (nameinput) {
-        if (key == '\r') {  // Enter key
+        if (key == '\r') {  
 			//sortScoresInFile();
             nameinput = false;
             playgame = true;
-            newgame();  // Transition to the game
-        } else if (key == '\b') {  // Backspace key
+            newgame();  
+        } else if (key == '\b') {  
             if (indexnumber > 0) {
                 indexnumber--;
-                str[indexnumber] = '\0';  // Null-terminate after removing a character
+                str[indexnumber] = '\0'; 
             }
         } else {
-            if (indexnumber < 999) {  // Check for buffer overflow
+            if (indexnumber < 999) {  
                 str[indexnumber] = key;
                 indexnumber++;
-                str[indexnumber] = '\0';  // Always null-terminate
-            } else {
-                printf("Name input is too long!\n");  // Optional: Warn user about max length
-            }
+                str[indexnumber] = '\0';  
+            } 
+			// else {
+            //     printf("Name input is too long!\n"); 
+            // }
         }
     }
     
-    if (key == 'q' || key == 'Q') {  // Handle both 'q' and 'Q' for quitting
+    if (key == 'q' || key == 'Q') { 
         exit(0);
     }
 
@@ -687,6 +713,44 @@ void iSpecialKeyboard(unsigned char key) {
 	//place your codes for other keys here
 }
 
+void playharrydead()
+{
+	char command[256];
+	sprintf(command, "close explosion%d", soundcount_exp);
+    mciSendStringA(command, NULL, 0, NULL);
+	sprintf(command, "open \"mara.WAV\" type waveaudio alias explosion%d", soundcount_exp);
+    mciSendStringA(command, NULL, 0, NULL);
+	sprintf(command, "play explosion%d", soundcount_exp);
+    mciSendStringA(command, NULL, 0, NULL);
+	soundcount_exp++;
+	if(soundcount_exp == 100) soundcount_exp = 0;
+}
+
+void playdemendead()
+{
+	char command[256];
+	sprintf(command, "close explosion%d", soundcount_exp1);
+    mciSendStringA(command, NULL, 0, NULL);
+	sprintf(command, "open \"spell.WAV\" type waveaudio alias explosion%d", soundcount_exp1);
+    mciSendStringA(command, NULL, 0, NULL);
+	sprintf(command, "play explosion%d", soundcount_exp1);
+    mciSendStringA(command, NULL, 0, NULL);
+	soundcount_exp1++;
+	if(soundcount_exp1 == 100) soundcount_exp1 = 0;
+}
+
+void playhatcollect()
+{
+	char command[256];
+	sprintf(command, "close explosion%d", soundcount_exp2);
+    mciSendStringA(command, NULL, 0, NULL);
+	sprintf(command, "open \"hatcollect.WAV\" type waveaudio alias explosion%d", soundcount_exp2);
+    mciSendStringA(command, NULL, 0, NULL);
+	sprintf(command, "play explosion%d", soundcount_exp2);
+    mciSendStringA(command, NULL, 0, NULL);
+	soundcount_exp2++;
+	if(soundcount_exp2 == 100) soundcount_exp2 = 0;
+}
 
 void dementorinitial(){
 		dem1.now[0]=9;
@@ -1931,6 +1995,7 @@ void Harrymove(){
 		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==3){
 			snitchCollected++;
 			point+=5;
+			playhatcollect();
 			maze[mazeLevel][harryNow[0]][harryNow[1]]=0;
 			if(!powerup){
 				powerup=true;
@@ -1940,12 +2005,14 @@ void Harrymove(){
 		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==5){
 			gamewin=true;
 			playgame=false;
-			if(musicOn){
-				musicOn=false;
-				PlaySound(0,0,0);
-				gamewinsound=true;
-				if(gamewinsound){
-				PlaySound(TEXT("assets\\sound\\aveda.WAV"), NULL,SND_ASYNC );
+			if(totalsound){
+				if(musicOn){
+					musicOn=false;
+					PlaySound(0,0,0);
+					gamewinsound=true;
+					if(gamewinsound){
+					PlaySound(TEXT("assets\\sound\\aveda.WAV"), NULL,SND_ASYNC );
+					}
 				}
 			}
 		}
@@ -1964,6 +2031,7 @@ void Harrymove(){
 		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==3){
 			snitchCollected++;
 			point+=5;
+			playhatcollect();
 			maze[mazeLevel][harryNow[0]][harryNow[1]]=0;
 			if(!powerup){
 				powerup=true;
@@ -1973,12 +2041,14 @@ void Harrymove(){
 		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==5){
 			gamewin=true;
 			playgame=false;
-			if(musicOn){
-				musicOn=false;
-				PlaySound(0,0,0);
-				gamewinsound=true;
-				if(gamewinsound){
-				PlaySound(TEXT("assets\\sound\\aveda.WAV"), NULL,SND_ASYNC );
+			if(totalsound){
+				if(musicOn){
+					musicOn=false;
+					PlaySound(0,0,0);
+					gamewinsound=true;
+					if(gamewinsound){
+					PlaySound(TEXT("assets\\sound\\aveda.WAV"), NULL,SND_ASYNC );
+					}
 				}
 			}
 		}
@@ -1997,6 +2067,7 @@ void Harrymove(){
 		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==3){
 			snitchCollected++;
 			point+=5;
+			playhatcollect();
 			maze[mazeLevel][harryNow[0]][harryNow[1]]=0;
 			if(!powerup){
 				powerup=true;
@@ -2006,12 +2077,14 @@ void Harrymove(){
 		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==5){
 			gamewin=true;
 			playgame=false;
-			if(musicOn){
-				musicOn=false;
-				PlaySound(0,0,0);
-				gamewinsound=true;
-				if(gamewinsound){
-				PlaySound(TEXT("assets\\sound\\aveda.WAV"), NULL,SND_ASYNC );
+			if(totalsound){
+				if(musicOn){
+					musicOn=false;
+					PlaySound(0,0,0);
+					gamewinsound=true;
+					if(gamewinsound){
+					PlaySound(TEXT("assets\\sound\\aveda.WAV"), NULL,SND_ASYNC );
+					}
 				}
 			}
 		}
@@ -2030,6 +2103,7 @@ void Harrymove(){
 		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==3){
 			snitchCollected++;
 			point+=5;
+			playhatcollect();
 			maze[mazeLevel][harryNow[0]][harryNow[1]]=0;
 			if(!powerup){
 				powerup=true;
@@ -2039,12 +2113,14 @@ void Harrymove(){
 		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==5){
 			gamewin=true;
 			playgame=false;
-			if(musicOn){
-				musicOn=false;
-				PlaySound(0,0,0);
-				gamewinsound=true;
-				if(gamewinsound){
-				PlaySound(TEXT("assets\\sound\\aveda.WAV"), NULL,SND_ASYNC );
+			if(totalsound){
+				if(musicOn){
+					musicOn=false;
+					PlaySound(0,0,0);
+					gamewinsound=true;
+					if(gamewinsound){
+					PlaySound(TEXT("assets\\sound\\aveda.WAV"), NULL,SND_ASYNC );
+					}
 				}
 			}
 		}
@@ -2057,15 +2133,19 @@ void Harrymove(){
 void  Harrydeadcheck(){
 	if(harryNow[0]==dem1.now[0] && harryNow[1]==dem1.now[1] && harrydead==false && powerup==false && dem1.dead==false){
 		harrydead=true;
+		playharrydead();
 	}
 	else if(harryNow[0]==dem2.now[0] && harryNow[1]==dem2.now[1] && harrydead==false && powerup==false && dem2.dead==false){
 		harrydead=true;
+		playharrydead();
 	}
 	else if(harryNow[0]==dem3.now[0] && harryNow[1]==dem3.now[1] && harrydead==false && powerup==false && dem3.dead==false){
 		harrydead=true;
+		playharrydead();
 	}
 	else if(harryNow[0]==basil.now[0] && harryNow[1]==basil.now[1] && harrydead==false ){
 		harrydead=true;
+		playharrydead();
 	}
 	if(harryNow[0]==dem1.now[0] && harryNow[1]==dem1.now[1] && harrydead==false && powerup==true && dem1.dead==false){
 		// dem1.now[0]=dem1initY;
@@ -2073,6 +2153,7 @@ void  Harrydeadcheck(){
 		// dem1.x = mazeX + dem1.now[1]*mazepixel;
 		// dem1.y = mazeY + (20-dem1initY)*mazepixel;
 		dem1.dead=true;
+		playdemendead();
 		dem1.timerid=iSetTimer(1000,dem1deadtolife);
 		iPauseTimer(timerID); 
 		timerCount=0;
@@ -2084,6 +2165,7 @@ void  Harrydeadcheck(){
 		// dem2.x = mazeX + dem2.now[1]*mazepixel;
 		// dem2.y = mazeY + (20-dem2initY)*mazepixel;
 		dem2.dead=true;
+		playdemendead();
 		dem2.timerid=iSetTimer(1000,dem2deadtolife);
 		iPauseTimer(timerID); 
 		timerCount=0;
@@ -2095,6 +2177,7 @@ void  Harrydeadcheck(){
 		// dem3.x = mazeX + dem3.now[1]*mazepixel;
 		// dem3.y = mazeY + (20-dem3initY)*mazepixel;
 		dem3.dead=true;
+		playdemendead();
 		dem3.timerid=iSetTimer(1000,dem3deadtolife);
 		iPauseTimer(timerID); 
 		timerCount=0;
@@ -2124,12 +2207,14 @@ void lifecheck(){
 			appendScoreToFile(str, point);
 			printf("%s\n",str);
 			str[0]='\0';
-			if(musicOn){
-				musicOn=false;
-				PlaySound(0,0,0);
-				deaddialouge=true;
-				if(deaddialouge){
-				PlaySound(TEXT("assets\\sound\\youknowwho.WAV"), NULL,SND_ASYNC );
+			if(totalsound){
+				if(musicOn){
+					musicOn=false;
+					PlaySound(0,0,0);
+					deaddialouge=true;
+					if(deaddialouge){
+					PlaySound(TEXT("assets\\sound\\youknowwho.WAV"), NULL,SND_ASYNC );
+					}
 				}
 			}
 		}
@@ -2213,7 +2298,7 @@ void appendScoreToFile(const char* name, int score) {
 int compareScores(const void *a, const void *b) {
     Entry *entryA = (Entry *)a;
     Entry *entryB = (Entry *)b;
-    return entryB->score - entryA->score;  // Descending order
+    return entryB->score - entryA->score;
 }
 
 void sortScoresInFile() {
@@ -2257,8 +2342,7 @@ void showHighScore() {
 void timerFunction() {
     timerCount++;
     printf("Timer Count: %d\n", timerCount);
-
-    if (timerCount >= poweruptime) {
+	if (timerCount >= poweruptime) {
         iPauseTimer(timerID); 
 		timerCount=0;
 		powerup=false;
@@ -2272,112 +2356,12 @@ void update(){
 	targetchange();
 }
 
-// void hatpassing(){
-// 	srand(time(0));
-// 	int r=rand()%4;
-// 	// right=0
-// 	// left=1
-// 	// up=2
-// 	// down=3
-// 	for(int i=0;i<21;i++){
-// 		for(int j=0;j<19;j++){
-// 			if(r==0){
-// 				if(maze[mazeLevel][i][j+1]!=1){
-// 					int temp=maze[mazeLevel][i][j];
-// 					maze[mazeLevel][i][j]=maze[mazeLevel][i][j+1];
-// 					maze[mazeLevel][i][j+1]=temp;
-// 				}
-// 				// else if(maze[mazeLevel][i][j-1]!=1){
-// 				// 	int temp=maze[mazeLevel][i][j];
-// 				// 	maze[mazeLevel][i][j]=maze[mazeLevel][i][j-1];
-// 				// 	maze[mazeLevel][i][j-1]=temp;
-// 				// }
-// 				// else if(maze[mazeLevel][i+1][j]!=1){
-// 				// 	int temp=maze[mazeLevel][i][j];
-// 				// 	maze[mazeLevel][i][j]=maze[mazeLevel][i+1][j];
-// 				// 	maze[mazeLevel][i+1][j]=temp;
-// 				// }
-// 				// else if(maze[mazeLevel][i-1][j]!=1){
-// 				// 	int temp=maze[mazeLevel][i][j];
-// 				// 	maze[mazeLevel][i][j]=maze[mazeLevel][i-1][j];
-// 				// 	maze[mazeLevel][i-1][j]=temp;
-// 				// }
-// 			}
-// 			if(r==1){
-// 				if(maze[mazeLevel][i][j-1]!=1){
-// 					int temp=maze[mazeLevel][i][j];
-// 					maze[mazeLevel][i][j]=maze[mazeLevel][i][j-1];
-// 					maze[mazeLevel][i][j-1]=temp;
-// 				}
-// 				// else if(maze[mazeLevel][i][j+1]!=1){
-// 				// 	int temp=maze[mazeLevel][i][j];
-// 				// 	maze[mazeLevel][i][j]=maze[mazeLevel][i][j+1];
-// 				// 	maze[mazeLevel][i][j+1]=temp;
-// 				// }
-// 				// else if(maze[mazeLevel][i+1][j]!=1){
-// 				// 	int temp=maze[mazeLevel][i][j];
-// 				// 	maze[mazeLevel][i][j]=maze[mazeLevel][i+1][j];
-// 				// 	maze[mazeLevel][i+1][j]=temp;
-// 				// }
-// 				// else if(maze[mazeLevel][i-1][j]!=1){
-// 				// 	int temp=maze[mazeLevel][i][j];
-// 				// 	maze[mazeLevel][i][j]=maze[mazeLevel][i-1][j];
-// 				// 	maze[mazeLevel][i-1][j]=temp;
-// 				// }
-// 			}
-// 			if(r==2){
-// 				if(maze[mazeLevel][i-1][j]!=1){
-// 					int temp=maze[mazeLevel][i][j];
-// 					maze[mazeLevel][i][j]=maze[mazeLevel][i-1][j];
-// 					maze[mazeLevel][i-1][j]=temp;
-// 				}
-// 				// else if(maze[mazeLevel][i][j-1]!=1){
-// 				// 	int temp=maze[mazeLevel][i][j];
-// 				// 	maze[mazeLevel][i][j]=maze[mazeLevel][i][j-1];
-// 				// 	maze[mazeLevel][i][j-1]=temp;
-// 				// }
-// 				// else if(maze[mazeLevel][i][j+1]!=1){
-// 				// 	int temp=maze[mazeLevel][i][j];
-// 				// 	maze[mazeLevel][i][j]=maze[mazeLevel][i][j+1];
-// 				// 	maze[mazeLevel][i][j+1]=temp;
-// 				// }
-// 				// else if(maze[mazeLevel][i+1][j]!=1){
-// 				// 	int temp=maze[mazeLevel][i][j];
-// 				// 	maze[mazeLevel][i][j]=maze[mazeLevel][i+1][j];
-// 				// 	maze[mazeLevel][i+1][j]=temp;
-// 				// }
-// 			}
-// 			if(r==3){
-// 				if(maze[mazeLevel][i+1][j]!=1){
-// 					int temp=maze[mazeLevel][i][j];
-// 					maze[mazeLevel][i][j]=maze[mazeLevel][i+1][j];
-// 					maze[mazeLevel][i+1][j]=temp;
-// 				}
-// 				// else if(maze[mazeLevel][i-1][j]!=1){
-// 				// 	int temp=maze[mazeLevel][i][j];
-// 				// 	maze[mazeLevel][i][j]=maze[mazeLevel][i-1][j];
-// 				// 	maze[mazeLevel][i-1][j]=temp;
-// 				// }
-// 				// else if(maze[mazeLevel][i][j-1]!=1){
-// 				// 	int temp=maze[mazeLevel][i][j];
-// 				// 	maze[mazeLevel][i][j]=maze[mazeLevel][i][j-1];
-// 				// 	maze[mazeLevel][i][j-1]=temp;
-// 				// }
-// 				// else if(maze[mazeLevel][i][j+1]!=1){
-// 				// 	int temp=maze[mazeLevel][i][j];
-// 				// 	maze[mazeLevel][i][j]=maze[mazeLevel][i][j+1];
-// 				// 	maze[mazeLevel][i][j+1]=temp;
-// 				// }
-// 			}
-// 		}
-// 	}
-// }
-
 int main() {
 	harryinitial();
 	dementorinitial();
 	iSetTimer(dementortime,update);
-	soundMoldy();
+	if(totalsound)
+		soundMoldy();
 	// iSetTimer(10, Harrydeadcheck);
 	// iSetTimer(10,lifecheck);
 	//iSetTimer(harrytime,Harrymove);
