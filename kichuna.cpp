@@ -2242,7 +2242,7 @@ void appendScoreToFile(const char* name, int score) {
 int compareScores(const void *a, const void *b) {
     Entry *entryA = (Entry *)a;
     Entry *entryB = (Entry *)b;
-    return entryB->score - entryA->score;  // Descending order
+    return entryB->score - entryA->score;
 }
 
 void sortScoresInFile() {
