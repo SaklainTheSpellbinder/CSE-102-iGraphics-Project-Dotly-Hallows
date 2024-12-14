@@ -48,6 +48,7 @@ int snitchYcor[210];
 int hocrux[210];
 int harryNow[2]={19,9};
 int snitchCollected=0;
+int deathtime=5;
 char score[1000];
 int point=0;
 int life=3;
@@ -77,6 +78,7 @@ bool entername=false;
 int timerCount=0;
 int timerID;
 int indexnumber=0;
+int poweruptime=9;
 char str[1000]="";
 
 #define MAX_ENTRIES 100
@@ -168,27 +170,28 @@ int original[3][21][19] =
 	}
     ,
     {
-		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-		1, 2, 3, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1,
-		1, 2, 1, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 1, 2, 1,
-		1, 2, 1, 1, 2, 2, 1, 2, 2, 1, 2, 2, 1, 2, 2, 1, 1, 2, 1,
-		1, 2, 2, 2, 1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 1, 2, 2, 2, 1,
-		1, 1, 1, 1, 1, 2, 2, 2, 2, 1, 2, 2, 2, 2, 1, 1, 1, 1, 1,
-		1, 2, 2, 2, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 2, 2, 1,
-		1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1,
-		1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 1,
-		1, 2, 2, 2, 2, 1, 2, 1, 2, 5, 2, 1, 2, 1, 2, 2, 2, 2, 1,
-		1, 2, 1, 2, 1, 1, 2, 1, 1, 0, 1, 1, 2, 1, 1, 3, 1, 2, 1,
-		1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1,
-		1, 2, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 2, 1,
-		1, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 1,
-		1, 1, 2, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 1, 1,
-		1, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 1, 2, 2, 1,
-		1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 2, 1,
-		1, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 1,
-		1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1,
-		1, 2, 2, 2, 2, 1, 2, 2, 2, 0, 2, 2, 2, 1, 2, 2, 2, 2, 1,
-		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+		1,2,2,1,2,2,2,2,2,2,2,1,2,2,2,2,2,2,1,
+		1,2,1,1,1,2,1,1,1,1,1,1,1,1,1,2,1,2,1,
+		1,2,1,2,2,2,1,2,2,2,2,2,2,2,2,2,1,2,1,
+		1,2,1,2,1,2,1,1,1,1,1,1,1,1,1,1,1,2,1,
+		1,2,1,2,1,2,2,2,2,2,2,2,2,2,1,1,1,2,1,
+		1,2,1,2,1,2,1,1,1,1,1,1,1,2,2,2,2,2,1,
+		1,2,2,2,1,2,2,1,2,2,2,1,1,2,1,1,1,2,1,
+		1,2,1,2,1,2,1,1,2,5,2,1,2,2,1,2,1,2,1,
+		1,2,1,2,1,2,2,1,1,2,1,1,1,2,1,2,1,2,1,
+		1,1,1,2,1,2,1,1,2,2,2,2,2,2,1,2,1,1,1,
+		1,2,1,1,1,2,2,2,2,1,1,1,1,1,1,2,1,2,1,
+		1,2,1,2,1,2,1,1,1,1,2,2,2,2,2,2,1,2,1,
+		1,2,1,2,1,2,2,2,1,2,2,1,2,2,1,2,2,2,1,
+		1,2,2,2,1,2,1,1,1,2,2,1,2,1,1,1,1,2,1,
+		1,2,1,2,1,2,2,2,2,2,2,1,1,1,1,1,1,2,1,
+		1,2,1,2,1,1,1,1,1,1,2,2,2,2,2,2,1,2,1,
+		1,2,1,2,2,2,2,2,2,1,2,2,1,2,2,1,1,2,1,
+		1,2,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,
+		1,2,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,
+		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+
     }
 };
 
@@ -405,6 +408,8 @@ void iDraw() {
 				dem1.dead=false;
 				dem2.dead=false;
 				dem3.dead=false;
+				poweruptime=7;
+				deathtime=3;
 				//newgame(mazeLevel);
 			}
 			if(snitchCollected==385 && mazeLevel==1){
@@ -412,6 +417,8 @@ void iDraw() {
 				dementorinitial();
 				mazeLevel=2;
 				dementortime=250;
+				poweruptime=5;
+				deathtime=2;
 				powerup=false;
 				timerCount=0;
 				dem1.deadtime=0;
@@ -2132,7 +2139,7 @@ void dem1deadtolife (){
     dem1.deadtime++;
     printf("deadtime Count: %d\n", dem1.deadtime);
 
-    if (dem1.deadtime >= 5) {
+    if (dem1.deadtime >= deathtime) {
         iPauseTimer(dem1.timerid); 
 		dem1.deadtime=0;
 		dem1.dead=false;
@@ -2143,7 +2150,7 @@ void dem2deadtolife (){
     dem2.deadtime++;
     printf("deadtime Count: %d\n", dem2.deadtime);
 
-    if (dem2.deadtime >= 5) {
+    if (dem2.deadtime >= deathtime) {
         iPauseTimer(dem2.timerid); 
 		dem2.deadtime=0;
 		dem2.dead=false;
@@ -2154,7 +2161,7 @@ void dem3deadtolife (){
     dem3.deadtime++;
     printf("deadtime Count: %d\n", dem3.deadtime);
 
-    if (dem3.deadtime >= 5) {
+    if (dem3.deadtime >= deathtime) {
         iPauseTimer(dem3.timerid); 
 		dem3.deadtime=0;
 		dem3.dead=false;
@@ -2250,7 +2257,7 @@ void timerFunction() {
     timerCount++;
     printf("Timer Count: %d\n", timerCount);
 
-    if (timerCount >= 9) {
+    if (timerCount >= poweruptime) {
         iPauseTimer(timerID); 
 		timerCount=0;
 		powerup=false;
