@@ -29,6 +29,10 @@ void dem2deadtolife ();
 void dem3deadtolife ();
 void update();
 void timeID();
+void appendScoreToFile(const char* name, int score);
+void sortScoresInFile();
+void showHighScore();
+int compareScores(const void *a, const void *b);
 int dementortime=340;
 int brickNum;
 int snitchesNum;
@@ -62,6 +66,7 @@ int power_counter=0;
 int morse_na_morenai[4]={0,0,0,0};
 bool instructions=false;
 bool HallOfFame=false;
+bool nameinput=false;
 int dem1initX = 8;
 int dem1initY = 9;
 int dem2initX = 1;
@@ -74,8 +79,17 @@ bool entername=false;
 int timerCount=0;
 int timerID;
 int indexnumber=0;
-char str[1000];
+char str[1000]="";
 
+#define MAX_ENTRIES 100
+#define MAX_DISPLAYED_SCORES 3
+
+#define MAX_LINE_LENGTH 100
+
+typedef struct {
+    char name[MAX_LINE_LENGTH];
+    int score;
+} Entry;
 
 typedef struct{
 	int upInd, downInd, leftInd, rightInd;
@@ -275,6 +289,7 @@ char instructionscene[1][100]={"assets\\instructions.bmp"};
 char deaddementor[1][100]={"assets\\dead\\deaddementor.bmp"};
 char gamewinscene[1][100]={"assets\\GameWin.bmp"};
 char HallOfFamescene[1][100]={"assets\\HallOfFame.bmp"};
+char nameinputscene[1][100]={"assets\\NameInput.bmp"};
 //int x=500, y = 300, r = 20;
 /*
 	function iDraw() is called again and again by the system.
@@ -291,9 +306,16 @@ void iDraw() {
 	}
 	if(HallOfFame){
 		iShowBMP(0,0,HallOfFamescene[0]);
+		sortScoresInFile(); 
+		showHighScore();
 	}
 	if(instructions){
 		iShowBMP(0,0,instructionscene[0]);
+	}
+	if(nameinput){
+		iShowBMP(0,0,nameinputscene[0]);
+		iSetColor(0,0,0);
+		iText(350,282,str,GLUT_BITMAP_HELVETICA_18);
 	}
 	if(playgame){
 		drawmaze();
@@ -311,6 +333,7 @@ void iDraw() {
 		else if(life==1){
 			iShowBMP2(23,805,heart[0],0);
 		}
+		iSetColor(255,255,255);
 		iText(590, 815, "SCORE: ",GLUT_BITMAP_HELVETICA_18);
 		sprintf(score,"%d",point);
 		iText(662, 815, score,GLUT_BITMAP_HELVETICA_18);
@@ -463,8 +486,7 @@ void iMouse(int button, int state, int mx, int my) {
 		if(mainmenu){
 			if((mx>=337 && mx<=460) && (my>=302 && my<=380)){
 				mainmenu=false;
-				playgame=true;
-				newgame();
+				nameinput=true;
 			}
 			if((mx>=287 && mx<=535) && (my>=101 && my<=162)){
 				mainmenu=false;
@@ -538,9 +560,32 @@ void iMouse(int button, int state, int mx, int my) {
 	key- holds the ASCII value of the key pressed.
 	*/
 void iKeyboard(unsigned char key) {
-	if (key == 'q') {
-		exit(0);
-	}
+	printf("Key pressed: %c (%d)\n", key, key);
+	if (nameinput) {
+        if (key == '\r') {  // Enter key
+			//sortScoresInFile();
+            nameinput = false;
+            playgame = true;
+            newgame();  // Transition to the game
+        } else if (key == '\b') {  // Backspace key
+            if (indexnumber > 0) {
+                indexnumber--;
+                str[indexnumber] = '\0';  // Null-terminate after removing a character
+            }
+        } else {
+            if (indexnumber < 999) {  // Check for buffer overflow
+                str[indexnumber] = key;
+                indexnumber++;
+                str[indexnumber] = '\0';  // Always null-terminate
+            } else {
+                printf("Name input is too long!\n");  // Optional: Warn user about max length
+            }
+        }
+    }
+    
+    if (key == 'q' || key == 'Q') {  // Handle both 'q' and 'Q' for quitting
+        exit(0);
+    }
 
 
 	//place your codes for other keys here
@@ -2015,7 +2060,7 @@ void  Harrydeadcheck(){
 	else if(harryNow[0]==dem3.now[0] && harryNow[1]==dem3.now[1] && harrydead==false && powerup==false && dem3.dead==false){
 		harrydead=true;
 	}
-	else if(harryNow[0]==basil.now[0] && harryNow[1]==basil.now[1] && harrydead==false && powerup==false){
+	else if(harryNow[0]==basil.now[0] && harryNow[1]==basil.now[1] && harrydead==false ){
 		harrydead=true;
 	}
 	if(harryNow[0]==dem1.now[0] && harryNow[1]==dem1.now[1] && harrydead==false && powerup==true && dem1.dead==false){
@@ -2036,9 +2081,9 @@ void  Harrydeadcheck(){
 		// dem2.y = mazeY + (20-dem2initY)*mazepixel;
 		dem2.dead=true;
 		dem2.timerid=iSetTimer(1000,dem2deadtolife);
-		// iPauseTimer(timerID); 
-		// timerCount=0;
-		// powerup=false;
+		iPauseTimer(timerID); 
+		timerCount=0;
+		powerup=false;
 	}
 	else if(harryNow[0]==dem3.now[0] && harryNow[1]==dem3.now[1] && harrydead==false && dem3.dead==false){
 		// dem3.now[0]=dem3initY;
@@ -2072,6 +2117,9 @@ void lifecheck(){
 		else if(life==1){
 			gameover=true;
 			playgame=false;
+			appendScoreToFile(str, point);
+			printf("%s\n",str);
+			str[0]='\0';
 			if(musicOn){
 				musicOn=false;
 				PlaySound(0,0,0);
@@ -2129,6 +2177,7 @@ void soundMoldy(){
 void newgame(){
 	harryinitial();
 	dementorinitial();
+	indexnumber=0;
 	life=3;
 	mazeLevel=0;
 	point=0;
@@ -2143,85 +2192,62 @@ void newgame(){
 	}
 }
 
-#define MAX_ENTRIES 100
-#define MAX_DISPLAYED_SCORES 3
 
-struct ScoreEntry {
-    char name[100];
-    int score;
-};
-
-int compareScores(const void* a, const void* b) {
-    const struct ScoreEntry* scoreA = (const struct ScoreEntry*)a;
-    const struct ScoreEntry* scoreB = (const struct ScoreEntry*)b;
-
-    // Descending order: Higher scores first
-    return scoreB->score - scoreA->score;
-}
 
 void appendScoreToFile(const char* name, int score) {
-    FILE *file = fopen("assets//High_Score.txt", "a");
-    if (file) {
-        fprintf(file, "%s: %d\n", name, score);
-        fclose(file);
+    FILE *fp = fopen("assets//High_Score.txt", "a");
+    if (fp) {
+        fprintf(fp, "%s: %d\n", name, score);
+        fclose(fp);
+		printf("Score appended successfully for %s.\n", name);
+
     } else {
         printf("Error: Could not open High_Score.txt for appending.\n");
     }
 }
 
+int compareScores(const void *a, const void *b) {
+    Entry *entryA = (Entry *)a;
+    Entry *entryB = (Entry *)b;
+    return entryB->score - entryA->score;  // Descending order
+}
+
 void sortScoresInFile() {
-    FILE *file = fopen("assets//High_Score.txt", "r");
-    if (!file) {
-        printf("Error: Could not open High_Score.txt for reading.\n");
-        return;
-    }
-
-    struct ScoreEntry scores[MAX_ENTRIES];
+    FILE *fp = fopen("assets//High_Score.txt", "r");
+    Entry entries[MAX_ENTRIES];
     int count = 0;
-
-    while (fscanf(file, " %99[^:]: %d\n", scores[count].name, &scores[count].score) != EOF && count < MAX_ENTRIES) {
-        count++;
+    while (fgets(entries[count].name, MAX_LINE_LENGTH, fp) && count < MAX_ENTRIES) {
+        char *colon = strchr(entries[count].name, ':');
+        if (colon) {
+            *colon = '\0';
+            entries[count].score = atoi(colon + 1);
+            count++;
+        }
     }
-    fclose(file);
-
-    qsort(scores, count, sizeof(struct ScoreEntry), compareScores);
-
-    file = fopen("assets//High_Score.txt", "w");
-    if (!file) {
-        printf("Error: Could not open High_Score.txt for writing.\n");
-        return;
-    }
-
+    fclose(fp);
+    qsort(entries, count, sizeof(Entry), compareScores);
+    fp = fopen("assets//High_Score.txt", "w");
     for (int i = 0; i < count; i++) {
-        fprintf(file, "%s: %d\n", scores[i].name, scores[i].score);
+        fprintf(fp, "%s: %d\n", entries[i].name, entries[i].score);
     }
-    fclose(file);
+    fclose(fp);
 }
 
 void showHighScore() {
-    FILE *file = fopen("assets//High_Score.txt", "r");
-    if (!file) {
-        printf("Error: Could not open High_Score.txt for displaying high scores.\n");
-        return;
-    }
-
-    int yPosition = 495;
+    FILE *fp = fopen("assets//High_Score.txt", "r");
+	int yPosition = 570;
     char name[100];
     int score;
     int displayed = 0;
-
-    iShowBMP2(0, 0, "assets//HallOfFame.bmp", 0);
-
-    while (fscanf(file, " %99[^:]: %d\n", name, &score) == 2 && displayed < MAX_DISPLAYED_SCORES) {
+	while (fscanf(fp, " %99[^:]: %d\n", name, &score) == 2 && displayed < MAX_DISPLAYED_SCORES) {
         char displayText[150];
         sprintf(displayText, "%d. %s: %d", displayed + 1, name, score);
-        iSetColor(0, 0, 255);
-        iText(530, yPosition, displayText, GLUT_BITMAP_HELVETICA_18);
-        yPosition -= 70;
+        iSetColor(0, 0, 0);
+        iText(150, yPosition, displayText, GLUT_BITMAP_TIMES_ROMAN_24);
+        yPosition -= 50;
         displayed++;
     }
-
-    fclose(file);
+	fclose(fp);
 }
 
 void timerFunction() {

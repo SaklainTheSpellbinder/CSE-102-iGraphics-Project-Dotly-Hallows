@@ -4,14 +4,13 @@
 #include<stdbool.h>
 #include<Windows.h>
 #include<iostream>
+#include<string>
 #define screenheight 850
 #define screenwidth 800
 #define mazepixel 40// all of the sprites...harry demnetors....snitches eveerything is 40*40
 
 void drawmaze();
 void Harrymove();
-void newgame(int level);
-void checkTrigger();
 void dementorinitial();
 void harryinitial();
 void movedementor();
@@ -23,6 +22,13 @@ void Harrydeadcheck();
 void lifecheck();
 void soundMoldy();
 void newgame();
+void targetchange();
+void timerFunction();
+void dem1deadtolife ();
+void dem2deadtolife ();
+void dem3deadtolife ();
+void update();
+void timeID();
 int dementortime=340;
 int brickNum;
 int snitchesNum;
@@ -46,12 +52,31 @@ int life=3;
 bool harrydead=false;
 bool gameover=false;
 bool playgame=false;
+bool gamewin=false;
+bool gamewinsound=false;
 bool mainmenu=true;
 bool musicOn=true;
 bool deaddialouge=false;
 bool powerup=false;
+int power_counter=0;
+int morse_na_morenai[4]={0,0,0,0};
 bool instructions=false;
 bool HallOfFame=false;
+int dem1initX = 8;
+int dem1initY = 9;
+int dem2initX = 1;
+int dem2initY = 1;
+int dem3initX = 10;
+int dem3initY = 9;
+int basilinitX = 9;
+int basilinitY = 8;
+bool entername=false;
+int timerCount=0;
+int timerID;
+int indexnumber=0;
+char str[1000];
+
+
 typedef struct{
 	int upInd, downInd, leftInd, rightInd;
     int x;
@@ -60,9 +85,11 @@ typedef struct{
     bool upCount, downCount, leftCount, rightCount;
     int right, left, up, down;
 	bool dead;
+	int deadtime;
     int direction;
 	int now[2];
 	int target[2];
+	int timerid;
 }dementor;
 
 dementor dem1,dem2,dem3,basil;
@@ -129,7 +156,27 @@ int original[3][21][19] =
 	}
     ,
     {
-
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+		1, 2, 3, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1,
+		1, 2, 1, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 1, 2, 1,
+		1, 2, 1, 1, 2, 2, 1, 2, 2, 1, 2, 2, 1, 2, 2, 1, 1, 2, 1,
+		1, 2, 2, 2, 1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 1, 2, 2, 2, 1,
+		1, 1, 1, 1, 1, 2, 2, 2, 2, 1, 2, 2, 2, 2, 1, 1, 1, 1, 1,
+		1, 2, 2, 2, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 2, 2, 1,
+		1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1,
+		1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 1,
+		1, 2, 2, 2, 2, 1, 2, 1, 2, 5, 2, 1, 2, 1, 2, 2, 2, 2, 1,
+		1, 2, 1, 2, 1, 1, 2, 1, 1, 0, 1, 1, 2, 1, 1, 3, 1, 2, 1,
+		1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1,
+		1, 2, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 2, 1,
+		1, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 1,
+		1, 1, 2, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 1, 1,
+		1, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 1, 2, 2, 1,
+		1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 2, 1,
+		1, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 1,
+		1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1,
+		1, 2, 2, 2, 2, 1, 2, 2, 2, 0, 2, 2, 2, 1, 2, 2, 2, 2, 1,
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
     }
 };
 
@@ -183,13 +230,33 @@ int maze[3][21][19] =
 	}
     ,
     {
-
+		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+		1,2,2,2,1,1,2,2,3,1,2,2,2,2,2,1,2,2,1,
+		1,2,2,2,2,2,2,2,1,2,2,2,2,1,2,1,2,2,1,
+		1,2,1,1,2,1,2,2,1,2,2,2,1,1,2,2,3,1,1,
+		1,2,1,2,2,1,2,1,1,2,2,2,1,1,1,2,2,1,1,
+		1,2,1,3,2,1,2,1,2,2,1,2,1,2,1,2,2,2,1,
+		1,2,1,2,2,1,2,1,2,1,1,2,1,2,1,1,2,2,1,
+		1,3,1,2,1,1,1,1,2,2,1,2,1,2,1,2,2,2,1,
+		1,2,1,2,1,1,1,1,1,2,1,1,1,2,2,2,2,2,1,
+		1,2,1,2,2,2,2,1,2,5,2,1,1,1,1,1,2,1,1,
+		1,2,1,1,2,1,2,1,1,2,1,1,1,2,2,2,2,1,1,
+		1,2,1,3,2,2,2,2,1,3,1,2,2,2,1,2,3,1,1,
+		1,2,1,2,2,1,1,1,1,2,1,2,1,1,1,1,2,2,1,
+		1,2,1,2,2,2,2,2,2,2,2,2,1,2,1,2,2,1,1,
+		1,2,1,1,2,2,1,2,1,1,2,1,2,2,2,2,2,2,1,
+		1,2,2,1,2,2,1,1,1,1,1,1,1,1,1,1,2,2,1,
+		1,2,2,1,1,2,2,2,1,2,2,2,1,2,2,2,2,2,1,
+		1,2,1,1,1,3,1,2,2,3,1,2,2,2,2,2,1,2,1,
+		1,2,1,1,1,2,1,1,1,1,2,1,1,1,1,2,1,2,1,
+		1,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,1,3,1,
+		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
     }
 };
 
 char BGImg[4][30] = {"assets\\BG2.bmp","assets\\BG3.bmp"};
 char mazeWall[2][30]={"assets\\wall.bmp","assets\\tree.bmp"};
-char snitch[2][39]={"assets\\snitch4.bmp","assets\\Sortinghat2.bmp"};
+char snitch[3][39]={"assets\\snitch4.bmp","assets\\Sortinghat2.bmp","assets\\cup\\cup.bmp"};
 char harrydown[9][100]={"assets\\harry3\\tile001.bmp","assets\\harry3\\tile002.bmp"};
 char harryup[9][100]={"assets\\harry3\\tile009.bmp","assets\\harry3\\tile010.bmp"};
 char harryright[9][100]={"assets\\harry3\\tile027.bmp","assets\\harry3\\tile028.bmp"};
@@ -205,6 +272,9 @@ char harrydeadscene[1][100]={"assets\\harrydead\\000.bmp"};
 char gameoverscene[1][100]={"assets\\Gameover.bmp"};
 char mainmenuscene[1][100]={"assets\\mainmenu.bmp"};
 char instructionscene[1][100]={"assets\\instructions.bmp"};
+char deaddementor[1][100]={"assets\\dead\\deaddementor.bmp"};
+char gamewinscene[1][100]={"assets\\GameWin.bmp"};
+char HallOfFamescene[1][100]={"assets\\HallOfFame.bmp"};
 //int x=500, y = 300, r = 20;
 /*
 	function iDraw() is called again and again by the system.
@@ -218,6 +288,9 @@ void iDraw() {
 	iShowBMP(0,0,BGImg[0]);
 	if(mainmenu){
 		iShowBMP(0,0,mainmenuscene[0]);
+	}
+	if(HallOfFame){
+		iShowBMP(0,0,HallOfFamescene[0]);
 	}
 	if(instructions){
 		iShowBMP(0,0,instructionscene[0]);
@@ -274,6 +347,9 @@ void iDraw() {
 	if(gameover){
 		iShowBMP(0,0,gameoverscene[0]);
 	}
+	if(gamewin){
+		iShowBMP(0,0,gamewinscene[0]);
+	}
 }
 		
 	void harryinitial(){
@@ -302,7 +378,29 @@ void iDraw() {
 				dementorinitial();
 				mazeLevel=1;
 				dementortime=290;
+				powerup=false;
+				timerCount=0;
+				dem1.deadtime=0;
+				dem2.deadtime=0;
+				dem3.deadtime=0;
+				dem1.dead=false;
+				dem2.dead=false;
+				dem3.dead=false;
 				//newgame(mazeLevel);
+			}
+			if(snitchCollected==385 && mazeLevel==1){
+				harryinitial();
+				dementorinitial();
+				mazeLevel=2;
+				dementortime=250;
+				powerup=false;
+				timerCount=0;
+				dem1.deadtime=0;
+				dem2.deadtime=0;
+				dem3.deadtime=0;
+				dem1.dead=false;
+				dem2.dead=false;
+				dem3.dead=false;
 			}
     for (int i = 20; i >= 0; i--) {
         for (int j = 0; j < 19; j++) {
@@ -327,6 +425,14 @@ void iDraw() {
 					snitchYcor[snitchesNum] = mazepixel*(20-i);
 					snitchXcor[snitchesNum][1] = 0;
 					iShowBMP2(mazeX + snitchXcor[snitchesNum][0], mazeY + snitchYcor[snitchesNum],snitch[1],0 );
+				}
+			else if(maze[mazeLevel][i][j]==5)
+				{
+					snitchesNum=t++;
+					snitchXcor[snitchesNum][0] = mazepixel*j;
+					snitchYcor[snitchesNum] = mazepixel*(20-i);
+					snitchXcor[snitchesNum][1] = 0;
+					iShowBMP2(mazeX + snitchXcor[snitchesNum][0], mazeY + snitchYcor[snitchesNum],snitch[2],0 );
 				}
 		}
 	}
@@ -364,6 +470,16 @@ void iMouse(int button, int state, int mx, int my) {
 				mainmenu=false;
 				instructions=true;
 			}
+			if((mx>=267 && mx<=554) && (my>=213 && my<=272)){
+				mainmenu=false;
+				HallOfFame=true;
+			}
+		}
+		if(HallOfFame){
+			if((mx>=4 && mx<=114) && (my>=800 && my<=850)){
+				HallOfFame=false;
+				mainmenu=true;
+			}
 		}
 		if(instructions){
 			if((mx>=21 && mx<=149) && (my>=777 && my<=828)){
@@ -388,6 +504,23 @@ void iMouse(int button, int state, int mx, int my) {
 				exit(0);
 			}
 		}
+		if(gamewin){
+			if((mx>=249 && mx<=551) && (my>=146 && my<=235)){
+				gamewin=false;
+				mainmenu=true;
+				if(gamewinsound){
+					gamewinsound=false;
+					PlaySound(0,0,0);
+					musicOn=true;
+					if(musicOn){
+						PlaySound(TEXT("assets\\sound\\gamesound.WAV"), NULL,SND_LOOP | SND_ASYNC );
+					}
+				}
+			}
+			if((mx>=260 && mx<=537) && (my>=36 && my<=112)){
+				exit(0);
+			}
+		}
 		//place your codes here
 		//	printf("x = %d, y= %d\n",mx,my);
 		// x += 10;
@@ -408,6 +541,8 @@ void iKeyboard(unsigned char key) {
 	if (key == 'q') {
 		exit(0);
 	}
+
+
 	//place your codes for other keys here
 }
 
@@ -505,8 +640,6 @@ void iSpecialKeyboard(unsigned char key) {
 
 
 void dementorinitial(){
-		int dem1initX = 8;
-		int dem1initY = 9;
 		dem1.now[0]=9;
 		dem1.now[1]=8;
 		dem1.x = mazeX + dem1initX*mazepixel;
@@ -521,13 +654,14 @@ void dementorinitial(){
 		dem1.downInd=0;
 		dem1.direction=0;
 		dem1.dead=false;
+		dem1.lastcount=0;
 		dem1.target[0]=harryNow[0];
 		dem1.target[1]=harryNow[1];
+		dem1.deadtime=0;
 		
-		int dem2initX = 1;
-		int dem2initY = 1;
 		dem2.now[0]=1;
 		dem2.now[1]=1;
+		dem2.lastcount=0;
 		dem2.x = mazeX + dem2initX*mazepixel;
 		dem2.y = mazeY + (20-dem2initY)*mazepixel;
 		dem2.downCount=false;
@@ -542,11 +676,11 @@ void dementorinitial(){
 		dem2.dead=false;
 		dem2.target[0]=harryNow[0];
 		dem2.target[1]=harryNow[1];
+		dem2.deadtime=0;
 
-		int dem3initX = 10;
-		int dem3initY = 9;
 		dem3.now[0]=9;
 		dem3.now[1]=10;
+		dem3.lastcount=0;
 		dem3.x = mazeX + dem3initX*mazepixel;
 		dem3.y = mazeY + (20-dem3initY)*mazepixel;
 		dem3.downCount=false;
@@ -561,11 +695,11 @@ void dementorinitial(){
 		dem3.dead=false;
 		dem3.target[0]=harryNow[0];
 		dem3.target[1]=harryNow[1];
+		dem3.deadtime=0;
 
-		int basilinitX = 9;
-		int basilinitY = 8;
 		basil.now[0]=8;
 		basil.now[1]=9;
+		basil.lastcount=0;
 		basil.x = mazeX + basilinitX*mazepixel;
 		basil.y = mazeY + (20-basilinitY)*mazepixel;
 		basil.downCount=false;
@@ -580,6 +714,7 @@ void dementorinitial(){
 		basil.dead=false;
 		basil.target[0]=harryNow[0];
 		basil.target[1]=harryNow[1];
+		basil.deadtime=0;
 }
 
 //mara khawa AI editing starts
@@ -622,6 +757,7 @@ void movedem1(){
         if(dem1.target[1]>dem1.now[1] && NoWall(dem1.now,0) ){
 			dem1.now[1]++;
             dem1.x+=mazepixel;
+			dem1.lastcount=0;
         }
         else if(!NoWall(dem1.now,0)){
             if(dem1.target[0]>dem1.now[0] && NoWall(dem1.now,3)){
@@ -638,6 +774,7 @@ void movedem1(){
 				dem1.direction=1;
 				dem1.now[1]--;
 				dem1.x-=mazepixel;
+				dem1.lastcount=1;
 			}
 			else if(NoWall(dem1.now,3)){
 				dem1.direction=3;
@@ -653,6 +790,7 @@ void movedem1(){
 				dem1.direction=1;
 				dem1.now[1]--;
 				dem1.x-=mazepixel;
+				dem1.lastcount=1;
 			}
         }
 		else if(NoWall(dem1.now,0)){
@@ -670,6 +808,7 @@ void movedem1(){
 				dem1.direction=0;
 				dem1.now[1]++;
 				dem1.x+=mazepixel;
+				dem1.lastcount=0;
 			}
 		}
     }
@@ -683,6 +822,7 @@ void movedem1(){
         else if(dem1.target[1]<dem1.now[1] && NoWall(dem1.now,1) ){
 			dem1.now[1]--;
             dem1.x-=mazepixel;
+			dem1.lastcount=1;
         }
         else if(!NoWall(dem1.now,1)){
             if(dem1.target[0]>dem1.now[0] && NoWall(dem1.now,3)){
@@ -699,6 +839,7 @@ void movedem1(){
 				dem1.direction=0;
 				dem1.now[1]++;
 				dem1.x+=mazepixel;
+				dem1.lastcount=0;
 			}
 			else if(NoWall(dem1.now,3)){
 				dem1.direction=3;
@@ -714,6 +855,7 @@ void movedem1(){
 				dem1.direction=0;
 				dem1.now[1]++;
 				dem1.x+=mazepixel;
+				dem1.lastcount=0;
 			}
         }
 		else if(NoWall(dem1.now,1)){
@@ -730,6 +872,7 @@ void movedem1(){
 			else{
 				dem1.now[1]--;
 				dem1.x-=mazepixel;
+				dem1.lastcount=1;
 			}
 		}
     }
@@ -739,6 +882,7 @@ void movedem1(){
 			dem1.direction=1;
 			dem1.now[1]--;
 			dem1.x-=mazepixel;	
+			dem1.lastcount=1;
 		}
         else if(dem1.target[0]<dem1.now[0] && NoWall(dem1.now,2) ){
 			dem1.direction=2;
@@ -750,11 +894,13 @@ void movedem1(){
 				dem1.direction=0;
 				dem1.now[1]++;
 				dem1.x+=mazepixel;
+				dem1.lastcount=0;
 			}
             else if(dem1.target[1]<dem1.now[1] && NoWall(dem1.now,1)){
                 dem1.direction=1;
 				dem1.now[1]--;
                 dem1.x-=mazepixel;
+				dem1.lastcount=1;
             }
 			else if(dem1.target[0]>dem1.now[0] && NoWall(dem1.now,3)){
                 dem1.direction=3;
@@ -765,6 +911,7 @@ void movedem1(){
 				dem1.direction=1;
 				dem1.now[1]--;
 				dem1.x-=mazepixel;
+				dem1.lastcount=1;
 			}
 			else if(NoWall(dem1.now,3)){
 				dem1.direction=3;
@@ -775,6 +922,7 @@ void movedem1(){
 				dem1.direction=0;
 				dem1.now[1]++;
 				dem1.x+=mazepixel;
+				dem1.lastcount=0;
 			}
         }
 		else if(NoWall(dem1.now,2)){
@@ -782,11 +930,13 @@ void movedem1(){
 				dem1.direction=0;
 				dem1.now[1]++;
 				dem1.x+=mazepixel;
+				dem1.lastcount=0;
 			}
 			else if(dem1.target[1]<dem1.now[1] && NoWall(dem1.now,1)){
                 dem1.direction=1;
 				dem1.now[1]--;
                 dem1.x-=mazepixel;
+				dem1.lastcount=1;
             }
 			else{
 				dem1.now[0]--;
@@ -815,16 +965,19 @@ void movedem1(){
                 dem1.direction=1;
 				dem1.now[1]--;
                 dem1.x-=mazepixel;
+				dem1.lastcount=1;
             }
 			else if(dem1.target[1]>dem1.now[1] && NoWall(dem1.now,0)){
 				dem1.direction=0;
 				dem1.now[1]++;
 				dem1.x+=mazepixel;
+				dem1.lastcount=0;
 			}
 			else if(NoWall(dem1.now,1)){
 				dem1.direction=1;
 				dem1.now[1]--;
 				dem1.x-=mazepixel;
+				dem1.lastcount=1;
 			}
 			else if(NoWall(dem1.now,2)){
 				dem1.direction=2;
@@ -835,6 +988,7 @@ void movedem1(){
 				dem1.direction=0;
 				dem1.now[1]++;
 				dem1.x+=mazepixel;
+				dem1.lastcount=0;
 			}
         }
 		else if(NoWall(dem1.now,3)){
@@ -847,6 +1001,7 @@ void movedem1(){
                 dem1.direction=1;
 				dem1.now[1]--;
                 dem1.x-=mazepixel;
+				dem1.lastcount=1;
             }
 			else{
 				dem1.now[0]++;
@@ -863,6 +1018,7 @@ void movedem2(){
         if(dem2.target[1]>dem2.now[1] && NoWall(dem2.now,0) ){
 			dem2.now[1]++;
             dem2.x+=mazepixel;
+			dem2.lastcount=0;
         }
         else if(!NoWall(dem2.now,0)){
             if(dem2.target[0]>dem2.now[0] && NoWall(dem2.now,3)){
@@ -879,6 +1035,7 @@ void movedem2(){
 				dem2.direction=1;
 				dem2.now[1]--;
 				dem2.x-=mazepixel;
+				dem2.lastcount=1;
 			}
 			else if(NoWall(dem2.now,3)){
 				dem2.direction=3;
@@ -894,12 +1051,14 @@ void movedem2(){
 				dem2.direction=1;
 				dem2.now[1]--;
 				dem2.x-=mazepixel;
+				dem2.lastcount=1;
 			}
         }
 		else if(NoWall(dem2.now,0)){
 				dem2.direction=0;
 				dem2.now[1]++;
 				dem2.x+=mazepixel;	
+				dem2.lastcount=0;
 		}
     }
 
@@ -912,6 +1071,7 @@ void movedem2(){
         else if(dem2.target[1]<dem2.now[1] && NoWall(dem2.now,1) ){
 			dem2.now[1]--;
             dem2.x-=mazepixel;
+			dem2.lastcount=1;
         }
         else if(!NoWall(dem2.now,1)){
             if(dem2.target[0]>dem2.now[0] && NoWall(dem2.now,3)){
@@ -928,6 +1088,7 @@ void movedem2(){
 				dem2.direction=0;
 				dem2.now[1]++;
 				dem2.x+=mazepixel;
+				dem2.lastcount=0;
 			}
 			else if(NoWall(dem2.now,3)){
 				dem2.direction=3;
@@ -943,6 +1104,7 @@ void movedem2(){
 				dem2.direction=0;
 				dem2.now[1]++;
 				dem2.x+=mazepixel;
+				dem2.lastcount=0;
 			}
         }
 		else if(NoWall(dem2.now,1)){
@@ -959,6 +1121,7 @@ void movedem2(){
 			else{
 				dem2.now[1]--;
 				dem2.x-=mazepixel;
+				dem2.lastcount=1;
 			}
 		}
     }
@@ -983,11 +1146,13 @@ void movedem2(){
 				dem2.direction=0;
 				dem2.now[1]++;
 				dem2.x+=mazepixel;
+				dem2.lastcount=0;
 			}
             else if(dem2.target[1]<dem2.now[1] && NoWall(dem2.now,1)){
                 dem2.direction=1;
 				dem2.now[1]--;
                 dem2.x-=mazepixel;
+				dem2.lastcount=1;
             }
 			else if(NoWall(dem2.now,3)){
 				dem2.direction=3;
@@ -998,11 +1163,13 @@ void movedem2(){
 				dem2.direction=0;
 				dem2.now[1]++;
 				dem2.x+=mazepixel;
+				dem2.lastcount=0;
 			}
 			else if(NoWall(dem2.now,1)){
 				dem2.direction=1;
 				dem2.now[1]--;
 				dem2.x-=mazepixel;
+				dem2.lastcount=1;
 			}
         }
 		else if(NoWall(dem2.now,2)){
@@ -1043,16 +1210,19 @@ void movedem2(){
 				dem2.direction=0;
 				dem2.now[1]++;
 				dem2.x+=mazepixel;
+				dem2.lastcount=0;
 			}
             else if(dem2.target[1]<dem2.now[1] && NoWall(dem2.now,1)){
                 dem2.direction=1;
 				dem2.now[1]--;
                 dem2.x-=mazepixel;
+				dem2.lastcount=1;
             }
 			else if(NoWall(dem2.now,0)){
 				dem2.direction=0;
 				dem2.now[1]++;
 				dem2.x+=mazepixel;
+				dem2.lastcount=0;
 			}
 			else if(NoWall(dem2.now,2)){
 				dem2.direction=2;
@@ -1063,6 +1233,7 @@ void movedem2(){
 				dem2.direction=1;
 				dem2.now[1]--;
 				dem2.x-=mazepixel;
+				dem2.lastcount=1;
 			}
         }
 		else if(NoWall(dem2.now,3)){
@@ -1070,11 +1241,13 @@ void movedem2(){
                 dem2.direction=1;
 				dem2.now[1]--;
                 dem2.x-=mazepixel;
+				dem2.lastcount=1;
             }
 			else if(dem2.target[1]>dem2.now[1] && NoWall(dem2.now,0)){
 				dem2.direction=0;
 				dem2.now[1]++;
 				dem2.x+=mazepixel;
+				dem2.lastcount=0;
 			}
 			else{
 				dem2.now[0]++;
@@ -1091,6 +1264,7 @@ void movedem3(){
         if(dem3.target[1]>dem3.now[1] && NoWall(dem3.now,0) ){
 			dem3.now[1]++;
             dem3.x+=mazepixel;
+			dem3.lastcount=0;
         }
         else if(!NoWall(dem3.now,0)){
             if(dem3.target[0]>dem3.now[0] && NoWall(dem3.now,3)){
@@ -1102,6 +1276,7 @@ void movedem3(){
 				dem3.direction=1;
 				dem3.now[1]--;
 				dem3.x-=mazepixel;
+				dem3.lastcount=1;
 			}
             else if(dem3.target[0]<dem3.now[0] && NoWall(dem3.now,2)){
                 dem3.direction=2;
@@ -1112,6 +1287,7 @@ void movedem3(){
 				dem3.direction=1;
 				dem3.now[1]--;
 				dem3.x-=mazepixel;
+				dem3.lastcount=1;
 			}
 			else if(NoWall(dem3.now,3)){
 				dem3.direction=3;
@@ -1139,6 +1315,7 @@ void movedem3(){
 				dem3.direction=0;
 				dem3.now[1]++;
 				dem3.x+=mazepixel;
+				dem3.lastcount=0;
 			//}
 		}
     }
@@ -1152,6 +1329,7 @@ void movedem3(){
         else if(dem3.target[1]<dem3.now[1] && NoWall(dem3.now,1) ){
 			dem3.now[1]--;
             dem3.x-=mazepixel;
+			dem3.lastcount=1;
         }
         else if(!NoWall(dem3.now,1)){
             if(dem3.target[0]>dem3.now[0] && NoWall(dem3.now,3)){
@@ -1163,6 +1341,7 @@ void movedem3(){
 				dem3.direction=0;
 				dem3.now[1]++;
 				dem3.x+=mazepixel;
+				dem3.lastcount=0;
 			}
             else if(dem3.target[0]<dem3.now[0] && NoWall(dem3.now,2)){
                 dem3.direction=2;
@@ -1178,6 +1357,7 @@ void movedem3(){
 				dem3.direction=0;
 				dem3.now[1]++;
 				dem3.x+=mazepixel;
+				dem3.lastcount=0;
 			}
 			else if(NoWall(dem3.now,2)){
 				dem3.direction=2;
@@ -1199,6 +1379,7 @@ void movedem3(){
 			//else{
 				dem3.now[1]--;
 				dem3.x-=mazepixel;
+				dem3.lastcount=1; 
 			//}
 		}
     }
@@ -1207,7 +1388,8 @@ void movedem3(){
 		if(dem3.target[1]<dem3.now[1] && NoWall(dem3.now,1)){
 			dem3.direction=1;
 			dem3.now[1]--;
-			dem3.x-=mazepixel;	
+			dem3.x-=mazepixel;
+			dem3.lastcount=1;	
 		}
         else if(dem3.target[0]<dem3.now[0] && NoWall(dem3.now,2) ){
 			dem3.direction=2;
@@ -1219,6 +1401,7 @@ void movedem3(){
 				dem3.direction=0;
 				dem3.now[1]++;
 				dem3.x+=mazepixel;
+				dem3.lastcount=0;
 			}
 			else if(dem3.target[0]>dem3.now[0] && NoWall(dem3.now,3)){
                 dem3.direction=3;
@@ -1229,16 +1412,19 @@ void movedem3(){
                 dem3.direction=1;
 				dem3.now[1]--;
                 dem3.x-=mazepixel;
+				dem3.lastcount=1;
             }
 			else if(NoWall(dem3.now,1)){
 				dem3.direction=1;
 				dem3.now[1]--;
 				dem3.x-=mazepixel;
+				dem3.lastcount=1;
 			}
 			else if(NoWall(dem3.now,0)){
 				dem3.direction=0;
 				dem3.now[1]++;
 				dem3.x+=mazepixel;
+				dem3.lastcount=0;
 			}
 			else if(NoWall(dem3.now,3)){
 				dem3.direction=3;
@@ -1251,11 +1437,13 @@ void movedem3(){
 				dem3.direction=0;
 				dem3.now[1]++;
 				dem3.x+=mazepixel;
+				dem3.lastcount=0;
 			}
 			else if(dem3.target[1]<dem3.now[1] && NoWall(dem3.now,1)){
                 dem3.direction=1;
 				dem3.now[1]--;
                 dem3.x-=mazepixel;
+				dem3.lastcount=1;
             }
 			else{
 				dem3.now[0]--;
@@ -1269,6 +1457,7 @@ void movedem3(){
 			dem3.direction=0;
 			dem3.now[1]++;
 			dem3.x+=mazepixel;	
+			dem3.lastcount=0;
 		}
         if(dem3.target[0]>dem3.now[0] && NoWall(dem3.now,3) ){
 			dem3.now[0]++;
@@ -1279,6 +1468,7 @@ void movedem3(){
 				dem3.direction=0;
 				dem3.now[1]++;
 				dem3.x+=mazepixel;
+				dem3.lastcount=0;
 			}
             else if(dem3.target[0]<dem3.now[0] && NoWall(dem3.now,2)){
                 dem3.direction=2;
@@ -1289,6 +1479,7 @@ void movedem3(){
                 dem3.direction=1;
 				dem3.now[1]--;
                 dem3.x-=mazepixel;
+				dem3.lastcount=1;
             }
 			else if(NoWall(dem3.now,2)){
 				dem3.direction=2;
@@ -1299,11 +1490,13 @@ void movedem3(){
 				dem3.direction=1;
 				dem3.now[1]--;
 				dem3.x-=mazepixel;
+				dem3.lastcount=1;
 			}
 			else if(NoWall(dem3.now,0)){
 				dem3.direction=0;
 				dem3.now[1]++;
 				dem3.x+=mazepixel;
+				dem3.lastcount=0;
 			}
         }
 		else if(NoWall(dem3.now,3)){
@@ -1311,11 +1504,13 @@ void movedem3(){
 				dem3.direction=0;
 				dem3.now[1]++;
 				dem3.x+=mazepixel;
+				dem3.lastcount=0;
 			}
 			else if(dem3.target[1]<dem3.now[1] && NoWall(dem3.now,1)){
                 dem3.direction=1;
 				dem3.now[1]--;
                 dem3.x-=mazepixel;
+				dem3.lastcount=1;
             }
 			else{
 				dem3.now[0]++;
@@ -1332,6 +1527,7 @@ void movebasil(){
         if(basil.target[1]>basil.now[1] && NoWall(basil.now,0) ){
 			basil.now[1]++;
             basil.x+=mazepixel;
+			basil.lastcount=0;
         }
         else if(!NoWall(basil.now,0)){
             if(basil.target[0]>basil.now[0] && NoWall(basil.now,3)){
@@ -1348,6 +1544,7 @@ void movebasil(){
 				basil.direction=1;
 				basil.now[1]--;
 				basil.x-=mazepixel;
+				basil.lastcount=1;
 			}
 			else if(NoWall(basil.now,3)){
 				basil.direction=3;
@@ -1363,6 +1560,7 @@ void movebasil(){
 				basil.direction=1;
 				basil.now[1]--;
 				basil.x-=mazepixel;
+				basil.lastcount=1;
 			}
         }
 		else if(NoWall(basil.now,0)){
@@ -1380,6 +1578,7 @@ void movebasil(){
 				basil.direction=0;
 				basil.now[1]++;
 				basil.x+=mazepixel;
+				basil.lastcount=0;
 			}
 		}
     }
@@ -1393,6 +1592,7 @@ void movebasil(){
         else if(basil.target[1]<basil.now[1] && NoWall(basil.now,1) ){
 			basil.now[1]--;
             basil.x-=mazepixel;
+			basil.lastcount=1;
         }
         else if(!NoWall(basil.now,1)){
             if(basil.target[0]>basil.now[0] && NoWall(basil.now,3)){
@@ -1409,6 +1609,7 @@ void movebasil(){
 				basil.direction=0;
 				basil.now[1]++;
 				basil.x+=mazepixel;
+				basil.lastcount=0;
 			}
 			else if(NoWall(basil.now,3)){
 				basil.direction=3;
@@ -1424,6 +1625,7 @@ void movebasil(){
 				basil.direction=0;
 				basil.now[1]++;
 				basil.x+=mazepixel;
+				basil.lastcount=0;
 			}
         }
 		else if(NoWall(basil.now,1)){
@@ -1440,6 +1642,7 @@ void movebasil(){
 			else{
 				basil.now[1]--;
 				basil.x-=mazepixel;
+				basil.lastcount=1;
 			}
 		}
     }
@@ -1455,11 +1658,13 @@ void movebasil(){
 				basil.direction=0;
 				basil.now[1]++;
 				basil.x+=mazepixel;
+				basil.lastcount=0;
 			}
             else if(basil.target[1]<basil.now[1] && NoWall(basil.now,1)){
                 basil.direction=1;
 				basil.now[1]--;
                 basil.x-=mazepixel;
+				basil.lastcount=1;
             }
 			else if(basil.target[0]>basil.now[0] && NoWall(basil.now,3)){
                 basil.direction=3;
@@ -1470,6 +1675,7 @@ void movebasil(){
 				basil.direction=1;
 				basil.now[1]--;
 				basil.x-=mazepixel;
+				basil.lastcount=1;
 			}
 			else if(NoWall(basil.now,3)){
 				basil.direction=3;
@@ -1480,6 +1686,7 @@ void movebasil(){
 				basil.direction=0;
 				basil.now[1]++;
 				basil.x+=mazepixel;
+				basil.lastcount=0;
 			}
         }
 		else if(NoWall(basil.now,2)){
@@ -1515,11 +1722,13 @@ void movebasil(){
 				basil.direction=0;
 				basil.now[1]++;
 				basil.x+=mazepixel;
+				basil.lastcount=0;
 			}
             else if(basil.target[1]<basil.now[1] && NoWall(basil.now,1)){
                 basil.direction=1;
 				basil.now[1]--;
                 basil.x-=mazepixel;
+				basil.lastcount=1;
             }
 			else if(basil.target[0]<basil.now[0] && NoWall(basil.now,2)){
                 basil.direction=2;
@@ -1535,11 +1744,13 @@ void movebasil(){
 				basil.direction=1;
 				basil.now[1]--;
 				basil.x-=mazepixel;
+				basil.lastcount=1;
 			}
 			else if(NoWall(basil.now,0)){
 				basil.direction=0;
 				basil.now[1]++;
 				basil.x+=mazepixel;
+				basil.lastcount=0;
 			}
         }
 		else if(NoWall(basil.now,3)){
@@ -1561,11 +1772,102 @@ void movebasil(){
     }	
 }
 
+void targetchange(){
+	if(!powerup && !dem1.dead){
+		dem1.target[0]=harryNow[0];
+		dem1.target[1]=harryNow[1];
+	}
+	if(!powerup && !dem2.dead){
+		dem2.target[0]=harryNow[0];
+		dem2.target[1]=harryNow[1];
+	}
+	if(!powerup && !dem3.dead){
+		dem3.target[0]=harryNow[0];
+		dem3.target[1]=harryNow[1];
+	}
+	if(!powerup && !basil.dead){
+		basil.target[0]=harryNow[0];
+		basil.target[1]=harryNow[1];
+	}
+	if(powerup && !dem1.dead){
+		dem1.target[0]=1;
+		dem1.target[1]=8;
+	}
+	if(powerup && !dem2.dead){
+		dem2.target[0]=2;
+		dem2.target[1]=17;
+	}
+	if(powerup && !dem3.dead){
+		dem3.target[0]=4;
+		dem3.target[1]=1;
+	}
+	if(powerup && !basil.dead){
+		basil.target[0]=16;
+		basil.target[1]=14;
+	}
+	if(dem1.dead){
+		dem1.target[0]=dem1initY;
+		dem1.target[1]=dem1initX;
+	}
+	if(dem2.dead){
+		dem2.target[0]=dem2initY;
+		dem2.target[1]=dem2initX;
+	}
+	if(dem3.dead){
+		dem3.target[0]=dem3initY;
+		dem3.target[1]=dem3initX;
+	}
+	if(basil.dead){
+		basil.target[0]=basilinitY;
+		basil.target[1]=basilinitX;
+	}
+}
+
 void movedementor(){
-	iShowBMP2(dem1.x, dem1.y, dementorright[0], 255);
-	iShowBMP2(dem2.x, dem2.y, dementorright[0], 255);
-	iShowBMP2(dem3.x, dem3.y, dementorright[0], 255);
-	iShowBMP2(basil.x, basil.y, basiliskright[0], 0);
+	if(!dem1.dead){
+		if(!powerup){
+			if(dem1.lastcount==0)
+				iShowBMP2(dem1.x, dem1.y, dementorright[0], 255);
+			else if(dem1.lastcount==1)
+				iShowBMP2(dem1.x, dem1.y, dementorleft[0], 255);
+		}
+		else{
+			iShowBMP2(dem1.x, dem1.y, dementordown[0], 16777215);
+		}
+	}
+	else if(dem1.dead){
+		iShowBMP2(dem1.x, dem1.y, deaddementor[0], 0);
+	}
+	if(!dem2.dead){
+		if(!powerup){
+			if(dem2.lastcount==0)
+				iShowBMP2(dem2.x, dem2.y, dementorright[0], 255);
+			else if(dem2.lastcount==1)
+				iShowBMP2(dem2.x, dem2.y, dementorleft[0], 255);
+		}
+		else
+			iShowBMP2(dem2.x, dem2.y, dementordown[0], 16777215);
+	}
+	else if(dem2.dead){
+		iShowBMP2(dem2.x, dem2.y, deaddementor[0], 0);
+	}
+	if(!dem3.dead){
+		if(!powerup){
+			if(dem3.lastcount==0)
+				iShowBMP2(dem3.x, dem3.y, dementorright[0], 255);
+			else if(dem3.lastcount==1)
+				iShowBMP2(dem3.x, dem3.y, dementorleft[0], 255);
+		}
+		else
+			iShowBMP2(dem3.x, dem3.y, dementordown[0], 16777215);
+	}
+	else if(dem3.dead){
+		iShowBMP2(dem3.x, dem3.y, deaddementor[0], 0);
+	}
+	if(basil.lastcount==0)
+		iShowBMP2(basil.x, basil.y, basiliskright[0], 0);
+	else if(basil.lastcount==1)
+		iShowBMP2(basil.x, basil.y, basiliskleft[0], 0);
 }
 
 void Harrymove(){
@@ -1581,6 +1883,22 @@ void Harrymove(){
 			snitchCollected++;
 			point+=5;
 			maze[mazeLevel][harryNow[0]][harryNow[1]]=0;
+			if(!powerup){
+				powerup=true;
+				timerID = iSetTimer(1000, timerFunction);
+			}
+		}
+		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==5){
+			gamewin=true;
+			playgame=false;
+			if(musicOn){
+				musicOn=false;
+				PlaySound(0,0,0);
+				gamewinsound=true;
+				if(gamewinsound){
+				PlaySound(TEXT("assets\\sound\\aveda.WAV"), NULL,SND_ASYNC );
+				}
+			}
 		}
 		harry.rightInd++;
         if(harry.rightInd>1) harry.rightInd=0;
@@ -1598,6 +1916,22 @@ void Harrymove(){
 			snitchCollected++;
 			point+=5;
 			maze[mazeLevel][harryNow[0]][harryNow[1]]=0;
+			if(!powerup){
+				powerup=true;
+				timerID = iSetTimer(1000, timerFunction);
+			}
+		}
+		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==5){
+			gamewin=true;
+			playgame=false;
+			if(musicOn){
+				musicOn=false;
+				PlaySound(0,0,0);
+				gamewinsound=true;
+				if(gamewinsound){
+				PlaySound(TEXT("assets\\sound\\aveda.WAV"), NULL,SND_ASYNC );
+				}
+			}
 		}
 		harry.leftInd++;
         if(harry.leftInd>1) harry.leftInd=0;
@@ -1615,6 +1949,22 @@ void Harrymove(){
 			snitchCollected++;
 			point+=5;
 			maze[mazeLevel][harryNow[0]][harryNow[1]]=0;
+			if(!powerup){
+				powerup=true;
+				timerID = iSetTimer(1000, timerFunction);
+			}
+		}
+		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==5){
+			gamewin=true;
+			playgame=false;
+			if(musicOn){
+				musicOn=false;
+				PlaySound(0,0,0);
+				gamewinsound=true;
+				if(gamewinsound){
+				PlaySound(TEXT("assets\\sound\\aveda.WAV"), NULL,SND_ASYNC );
+				}
+			}
 		}
 		harry.upInd++;
         if(harry.upInd>1) harry.upInd=0;
@@ -1632,6 +1982,22 @@ void Harrymove(){
 			snitchCollected++;
 			point+=5;
 			maze[mazeLevel][harryNow[0]][harryNow[1]]=0;
+			if(!powerup){
+				powerup=true;
+				timerID = iSetTimer(1000, timerFunction);
+			}
+		}
+		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==5){
+			gamewin=true;
+			playgame=false;
+			if(musicOn){
+				musicOn=false;
+				PlaySound(0,0,0);
+				gamewinsound=true;
+				if(gamewinsound){
+				PlaySound(TEXT("assets\\sound\\aveda.WAV"), NULL,SND_ASYNC );
+				}
+			}
 		}
 		harry.downInd++;
         if(harry.downInd>1) harry.downInd=0;
@@ -1640,18 +2006,55 @@ void Harrymove(){
 }
 
 void  Harrydeadcheck(){
-	if(harryNow[0]==dem1.now[0] && harryNow[1]==dem1.now[1] && harrydead==false){
+	if(harryNow[0]==dem1.now[0] && harryNow[1]==dem1.now[1] && harrydead==false && powerup==false && dem1.dead==false){
 		harrydead=true;
 	}
-	else if(harryNow[0]==dem2.now[0] && harryNow[1]==dem2.now[1] && harrydead==false){
+	else if(harryNow[0]==dem2.now[0] && harryNow[1]==dem2.now[1] && harrydead==false && powerup==false && dem2.dead==false){
 		harrydead=true;
 	}
-	else if(harryNow[0]==dem3.now[0] && harryNow[1]==dem3.now[1] && harrydead==false){
+	else if(harryNow[0]==dem3.now[0] && harryNow[1]==dem3.now[1] && harrydead==false && powerup==false && dem3.dead==false){
 		harrydead=true;
 	}
-	else if(harryNow[0]==basil.now[0] && harryNow[1]==basil.now[1] && harrydead==false){
+	else if(harryNow[0]==basil.now[0] && harryNow[1]==basil.now[1] && harrydead==false && powerup==false){
 		harrydead=true;
 	}
+	if(harryNow[0]==dem1.now[0] && harryNow[1]==dem1.now[1] && harrydead==false && powerup==true && dem1.dead==false){
+		// dem1.now[0]=dem1initY;
+		// dem1.now[1]=dem1initX;
+		// dem1.x = mazeX + dem1.now[1]*mazepixel;
+		// dem1.y = mazeY + (20-dem1initY)*mazepixel;
+		dem1.dead=true;
+		dem1.timerid=iSetTimer(1000,dem1deadtolife);
+		iPauseTimer(timerID); 
+		timerCount=0;
+		powerup=false;
+	}
+	else if(harryNow[0]==dem2.now[0] && harryNow[1]==dem2.now[1] && harrydead==false && dem2.dead==false){
+		// dem2.now[0]=dem2initY;
+		// dem2.now[1]=dem1initX;
+		// dem2.x = mazeX + dem2.now[1]*mazepixel;
+		// dem2.y = mazeY + (20-dem2initY)*mazepixel;
+		dem2.dead=true;
+		dem2.timerid=iSetTimer(1000,dem2deadtolife);
+		// iPauseTimer(timerID); 
+		// timerCount=0;
+		// powerup=false;
+	}
+	else if(harryNow[0]==dem3.now[0] && harryNow[1]==dem3.now[1] && harrydead==false && dem3.dead==false){
+		// dem3.now[0]=dem3initY;
+		// dem3.now[1]=dem1initX;
+		// dem3.x = mazeX + dem3.now[1]*mazepixel;
+		// dem3.y = mazeY + (20-dem3initY)*mazepixel;
+		dem3.dead=true;
+		dem3.timerid=iSetTimer(1000,dem3deadtolife);
+		iPauseTimer(timerID); 
+		timerCount=0;
+		powerup=false;
+	}
+}
+
+void timeID(){
+	
 }
 
 void lifecheck(){
@@ -1681,6 +2084,39 @@ void lifecheck(){
 	}
 }
 
+void dem1deadtolife (){
+    dem1.deadtime++;
+    printf("deadtime Count: %d\n", dem1.deadtime);
+
+    if (dem1.deadtime >= 5) {
+        iPauseTimer(dem1.timerid); 
+		dem1.deadtime=0;
+		dem1.dead=false;
+    }
+}
+
+void dem2deadtolife (){
+    dem2.deadtime++;
+    printf("deadtime Count: %d\n", dem2.deadtime);
+
+    if (dem2.deadtime >= 5) {
+        iPauseTimer(dem2.timerid); 
+		dem2.deadtime=0;
+		dem2.dead=false;
+    }
+}
+
+void dem3deadtolife (){
+    dem3.deadtime++;
+    printf("deadtime Count: %d\n", dem3.deadtime);
+
+    if (dem3.deadtime >= 5) {
+        iPauseTimer(dem3.timerid); 
+		dem3.deadtime=0;
+		dem3.dead=false;
+    }
+}
+
 void soundMoldy(){
 	if(musicOn){
 		PlaySound(TEXT("assets\\sound\\gamesound.WAV"), NULL,SND_LOOP | SND_ASYNC );
@@ -1697,6 +2133,7 @@ void newgame(){
 	mazeLevel=0;
 	point=0;
 	snitchCollected=0;
+	timerCount=0;
 	for(int eee=0;eee<3;eee++){
 		for(int cdi=0;cdi<21;cdi++){
 			for(int cse=0;cse<19;cse++){
@@ -1706,13 +2143,109 @@ void newgame(){
 	}
 }
 
+#define MAX_ENTRIES 100
+#define MAX_DISPLAYED_SCORES 3
+
+struct ScoreEntry {
+    char name[100];
+    int score;
+};
+
+int compareScores(const void* a, const void* b) {
+    const struct ScoreEntry* scoreA = (const struct ScoreEntry*)a;
+    const struct ScoreEntry* scoreB = (const struct ScoreEntry*)b;
+
+    // Descending order: Higher scores first
+    return scoreB->score - scoreA->score;
+}
+
+void appendScoreToFile(const char* name, int score) {
+    FILE *file = fopen("assets//High_Score.txt", "a");
+    if (file) {
+        fprintf(file, "%s: %d\n", name, score);
+        fclose(file);
+    } else {
+        printf("Error: Could not open High_Score.txt for appending.\n");
+    }
+}
+
+void sortScoresInFile() {
+    FILE *file = fopen("assets//High_Score.txt", "r");
+    if (!file) {
+        printf("Error: Could not open High_Score.txt for reading.\n");
+        return;
+    }
+
+    struct ScoreEntry scores[MAX_ENTRIES];
+    int count = 0;
+
+    while (fscanf(file, " %99[^:]: %d\n", scores[count].name, &scores[count].score) != EOF && count < MAX_ENTRIES) {
+        count++;
+    }
+    fclose(file);
+
+    qsort(scores, count, sizeof(struct ScoreEntry), compareScores);
+
+    file = fopen("assets//High_Score.txt", "w");
+    if (!file) {
+        printf("Error: Could not open High_Score.txt for writing.\n");
+        return;
+    }
+
+    for (int i = 0; i < count; i++) {
+        fprintf(file, "%s: %d\n", scores[i].name, scores[i].score);
+    }
+    fclose(file);
+}
+
+void showHighScore() {
+    FILE *file = fopen("assets//High_Score.txt", "r");
+    if (!file) {
+        printf("Error: Could not open High_Score.txt for displaying high scores.\n");
+        return;
+    }
+
+    int yPosition = 495;
+    char name[100];
+    int score;
+    int displayed = 0;
+
+    iShowBMP2(0, 0, "assets//HallOfFame.bmp", 0);
+
+    while (fscanf(file, " %99[^:]: %d\n", name, &score) == 2 && displayed < MAX_DISPLAYED_SCORES) {
+        char displayText[150];
+        sprintf(displayText, "%d. %s: %d", displayed + 1, name, score);
+        iSetColor(0, 0, 255);
+        iText(530, yPosition, displayText, GLUT_BITMAP_HELVETICA_18);
+        yPosition -= 70;
+        displayed++;
+    }
+
+    fclose(file);
+}
+
+void timerFunction() {
+    timerCount++;
+    printf("Timer Count: %d\n", timerCount);
+
+    if (timerCount >= 9) {
+        iPauseTimer(timerID); 
+		timerCount=0;
+		powerup=false;
+    }
+}
+void update(){
+	movedem1();
+	movedem2();
+	movedem3();
+	movebasil();
+	targetchange();
+}
+
 int main() {
 	harryinitial();
 	dementorinitial();
-	iSetTimer(dementortime,movedem1);
-	iSetTimer(dementortime,movedem2);
-	iSetTimer(dementortime,movedem3);
-	iSetTimer(dementortime,movebasil);
+	iSetTimer(dementortime,update);
 	soundMoldy();
 	// iSetTimer(10, Harrydeadcheck);
 	// iSetTimer(10,lifecheck);
