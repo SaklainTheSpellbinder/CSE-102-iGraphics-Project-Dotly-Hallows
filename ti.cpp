@@ -4,13 +4,13 @@
 #include<stdbool.h>
 #include<Windows.h>
 #include<iostream>
+#include<string>
 #define screenheight 850
 #define screenwidth 800
 #define mazepixel 40// all of the sprites...harry demnetors....snitches eveerything is 40*40
 
 void drawmaze();
 void Harrymove();
-void checkTrigger();
 void dementorinitial();
 void harryinitial();
 void movedementor();
@@ -71,6 +71,9 @@ int basilinitY = 8;
 bool entername=false;
 int timerCount=0;
 int timerID;
+int indexnumber=0;
+char str[1000];
+
 
 typedef struct{
 	int upInd, downInd, leftInd, rightInd;
