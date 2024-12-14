@@ -1,7 +1,7 @@
 import os
 from PIL import Image
 
-def resize_images_in_folder(folder_path, size=(70, 70)):
+def resize_images_in_folder(folder_path, size=(800, 850)):
     # List all files in the given folder
     for filename in os.listdir(folder_path):
         file_path = os.path.join(folder_path, filename)
@@ -28,5 +28,5 @@ def resize_images_in_folder(folder_path, size=(70, 70)):
                 print(f"Could not resize {filename}: {e}")
 
 if __name__ == "__main__":
-    folder_path = r"D:\\iGraphics-Project\\assets\\pic"
+    folder_path = r"D:\\iGraphics-Project\\assets\\tin"
     resize_images_in_folder(folder_path)
