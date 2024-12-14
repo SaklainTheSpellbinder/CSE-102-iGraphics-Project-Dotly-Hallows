@@ -46,8 +46,6 @@ int mazeYcor[200];
 int snitchXcor[210][2];
 int snitchYcor[210];
 int hocrux[210];
-int cellX;
-int cellY;
 int harryNow[2]={19,9};
 int snitchCollected=0;
 char score[1000];
@@ -378,10 +376,8 @@ void iDraw() {
 	void harryinitial(){
 		harryNow[0]=19;
 		harryNow[1]=9;
-		cellX = 9;
-		cellY = 19;
-		harry.x = mazeX + cellX*mazepixel;
-		harry.y = mazeY + (20-cellY)*mazepixel;
+		harry.x = mazeX + harryNow[1]*mazepixel;
+		harry.y = mazeY + (20-harryNow[0])*mazepixel;
 		harry.downCount=false;
 		harry.rightCount=false;
 		harry.upCount=false;
