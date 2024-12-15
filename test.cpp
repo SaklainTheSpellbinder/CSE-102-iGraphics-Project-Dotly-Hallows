@@ -1,3 +1,4 @@
+
 #include "iGraphics.h"
 #include<time.h>
 #include<stdlib.h>
@@ -27,11 +28,8 @@ void timerFunction();
 void dem1deadtolife ();
 void dem2deadtolife ();
 void dem3deadtolife ();
-void playhatcollect();
 void update();
 void timeID();
-void playharrydead();
-void playdemendead();
 void appendScoreToFile(const char* name, int score);
 void sortScoresInFile();
 void showHighScore();
@@ -41,8 +39,6 @@ int brickNum;
 int snitchesNum;
 int mazeHeight = 840;
 int mazeWidth = 760;
-int soundcount_exp1=0;
-int soundcount_exp2=0;
 int mazeX = (screenwidth / 2) - (mazeWidth / 2)+3;
 int mazeY = (screenheight / 2) - (mazeHeight / 2)-5;
 int mazeLevel = 0;
@@ -57,7 +53,6 @@ int deathtime=5;
 char score[1000];
 int point=0;
 int life=3;
-int soundcount_exp=0;
 bool harrydead=false;
 bool gameover=false;
 bool playgame=false;
@@ -713,44 +708,6 @@ void iSpecialKeyboard(unsigned char key) {
 	//place your codes for other keys here
 }
 
-void playharrydead()
-{
-	char command[256];
-	sprintf(command, "close explosion%d", soundcount_exp);
-    mciSendStringA(command, NULL, 0, NULL);
-	sprintf(command, "open \"mara.WAV\" type waveaudio alias explosion%d", soundcount_exp);
-    mciSendStringA(command, NULL, 0, NULL);
-	sprintf(command, "play explosion%d", soundcount_exp);
-    mciSendStringA(command, NULL, 0, NULL);
-	soundcount_exp++;
-	if(soundcount_exp == 100) soundcount_exp = 0;
-}
-
-void playdemendead()
-{
-	char command[256];
-	sprintf(command, "close explosion%d", soundcount_exp1);
-    mciSendStringA(command, NULL, 0, NULL);
-	sprintf(command, "open \"spell.WAV\" type waveaudio alias explosion%d", soundcount_exp1);
-    mciSendStringA(command, NULL, 0, NULL);
-	sprintf(command, "play explosion%d", soundcount_exp1);
-    mciSendStringA(command, NULL, 0, NULL);
-	soundcount_exp1++;
-	if(soundcount_exp1 == 100) soundcount_exp1 = 0;
-}
-
-void playhatcollect()
-{
-	char command[256];
-	sprintf(command, "close explosion%d", soundcount_exp2);
-    mciSendStringA(command, NULL, 0, NULL);
-	sprintf(command, "open \"hatcollect.WAV\" type waveaudio alias explosion%d", soundcount_exp2);
-    mciSendStringA(command, NULL, 0, NULL);
-	sprintf(command, "play explosion%d", soundcount_exp2);
-    mciSendStringA(command, NULL, 0, NULL);
-	soundcount_exp2++;
-	if(soundcount_exp2 == 100) soundcount_exp2 = 0;
-}
 
 void dementorinitial(){
 		dem1.now[0]=9;
@@ -1995,7 +1952,6 @@ void Harrymove(){
 		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==3){
 			snitchCollected++;
 			point+=5;
-			playhatcollect();
 			maze[mazeLevel][harryNow[0]][harryNow[1]]=0;
 			if(!powerup){
 				powerup=true;
@@ -2031,7 +1987,6 @@ void Harrymove(){
 		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==3){
 			snitchCollected++;
 			point+=5;
-			playhatcollect();
 			maze[mazeLevel][harryNow[0]][harryNow[1]]=0;
 			if(!powerup){
 				powerup=true;
@@ -2067,7 +2022,6 @@ void Harrymove(){
 		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==3){
 			snitchCollected++;
 			point+=5;
-			playhatcollect();
 			maze[mazeLevel][harryNow[0]][harryNow[1]]=0;
 			if(!powerup){
 				powerup=true;
@@ -2103,7 +2057,6 @@ void Harrymove(){
 		if(maze[mazeLevel][harryNow[0]][harryNow[1]]==3){
 			snitchCollected++;
 			point+=5;
-			playhatcollect();
 			maze[mazeLevel][harryNow[0]][harryNow[1]]=0;
 			if(!powerup){
 				powerup=true;
@@ -2133,19 +2086,15 @@ void Harrymove(){
 void  Harrydeadcheck(){
 	if(harryNow[0]==dem1.now[0] && harryNow[1]==dem1.now[1] && harrydead==false && powerup==false && dem1.dead==false){
 		harrydead=true;
-		playharrydead();
 	}
 	else if(harryNow[0]==dem2.now[0] && harryNow[1]==dem2.now[1] && harrydead==false && powerup==false && dem2.dead==false){
 		harrydead=true;
-		playharrydead();
 	}
 	else if(harryNow[0]==dem3.now[0] && harryNow[1]==dem3.now[1] && harrydead==false && powerup==false && dem3.dead==false){
 		harrydead=true;
-		playharrydead();
 	}
 	else if(harryNow[0]==basil.now[0] && harryNow[1]==basil.now[1] && harrydead==false ){
 		harrydead=true;
-		playharrydead();
 	}
 	if(harryNow[0]==dem1.now[0] && harryNow[1]==dem1.now[1] && harrydead==false && powerup==true && dem1.dead==false){
 		// dem1.now[0]=dem1initY;
@@ -2153,7 +2102,6 @@ void  Harrydeadcheck(){
 		// dem1.x = mazeX + dem1.now[1]*mazepixel;
 		// dem1.y = mazeY + (20-dem1initY)*mazepixel;
 		dem1.dead=true;
-		playdemendead();
 		dem1.timerid=iSetTimer(1000,dem1deadtolife);
 		iPauseTimer(timerID); 
 		timerCount=0;
@@ -2165,7 +2113,6 @@ void  Harrydeadcheck(){
 		// dem2.x = mazeX + dem2.now[1]*mazepixel;
 		// dem2.y = mazeY + (20-dem2initY)*mazepixel;
 		dem2.dead=true;
-		playdemendead();
 		dem2.timerid=iSetTimer(1000,dem2deadtolife);
 		iPauseTimer(timerID); 
 		timerCount=0;
@@ -2177,7 +2124,6 @@ void  Harrydeadcheck(){
 		// dem3.x = mazeX + dem3.now[1]*mazepixel;
 		// dem3.y = mazeY + (20-dem3initY)*mazepixel;
 		dem3.dead=true;
-		playdemendead();
 		dem3.timerid=iSetTimer(1000,dem3deadtolife);
 		iPauseTimer(timerID); 
 		timerCount=0;
