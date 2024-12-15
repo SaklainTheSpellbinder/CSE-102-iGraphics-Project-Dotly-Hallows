@@ -584,7 +584,7 @@ void iMouse(int button, int state, int mx, int my) {
 	key- holds the ASCII value of the key pressed.
 	*/
 void iKeyboard(unsigned char key) {
-	printf("Key pressed: %c (%d)\n", key, key);
+	//printf("Key pressed: %c (%d)\n", key, key);
 	if (nameinput) {
         if (key == '\r') {  
 			//sortScoresInFile();
@@ -634,7 +634,7 @@ void iSpecialKeyboard(unsigned char key) {
 				harry.upCount = false;
 				harry.leftCount = false;
 				harry.rightCount = true;
-				printf("%d %d\n",harryNow[0],harryNow[1]);
+				//printf("%d %d\n",harryNow[0],harryNow[1]);
                 harry.lastcount=0;
 			}
 			else
@@ -652,7 +652,7 @@ void iSpecialKeyboard(unsigned char key) {
 				harry.upCount = false;
 				harry.leftCount = true;
 				harry.rightCount = false;
-				printf("%d %d\n",harryNow[0],harryNow[1]);
+				//printf("%d %d\n",harryNow[0],harryNow[1]);
                 harry.lastcount=1;
 			}
 			else
@@ -671,7 +671,7 @@ void iSpecialKeyboard(unsigned char key) {
 				harry.upCount = true;
 				harry.leftCount = false;
 				harry.rightCount = false;
-                printf("%d %d\n",harryNow[0],harryNow[1]);
+                //printf("%d %d\n",harryNow[0],harryNow[1]);
                 harry.lastcount=2;
 			}
 			else
@@ -690,7 +690,7 @@ void iSpecialKeyboard(unsigned char key) {
 				harry.upCount = false;
 				harry.leftCount = false;
 				harry.rightCount = false;
-				printf("%d %d\n",harryNow[0],harryNow[1]);
+				//printf("%d %d\n",harryNow[0],harryNow[1]);
                 harry.lastcount=3;
 			}
 			else
@@ -2114,9 +2114,9 @@ void  Harrydeadcheck(){
 		// dem2.y = mazeY + (20-dem2initY)*mazepixel;
 		dem2.dead=true;
 		dem2.timerid=iSetTimer(1000,dem2deadtolife);
-		iPauseTimer(timerID); 
-		timerCount=0;
-		powerup=false;
+		// iPauseTimer(timerID); 
+		// timerCount=0;
+		// powerup=false;
 	}
 	else if(harryNow[0]==dem3.now[0] && harryNow[1]==dem3.now[1] && harrydead==false && dem3.dead==false){
 		// dem3.now[0]=dem3initY;
@@ -2151,7 +2151,7 @@ void lifecheck(){
 			gameover=true;
 			playgame=false;
 			appendScoreToFile(str, point);
-			printf("%s\n",str);
+			//printf("%s\n",str);
 			str[0]='\0';
 			if(totalsound){
 				if(musicOn){
@@ -2169,7 +2169,7 @@ void lifecheck(){
 
 void dem1deadtolife (){
     dem1.deadtime++;
-    printf("deadtime Count: %d\n", dem1.deadtime);
+    //printf("deadtime Count: %d\n", dem1.deadtime);
 
     if (dem1.deadtime >= deathtime) {
         iPauseTimer(dem1.timerid); 
@@ -2180,7 +2180,7 @@ void dem1deadtolife (){
 
 void dem2deadtolife (){
     dem2.deadtime++;
-    printf("deadtime Count: %d\n", dem2.deadtime);
+    //printf("deadtime Count: %d\n", dem2.deadtime);
 
     if (dem2.deadtime >= deathtime) {
         iPauseTimer(dem2.timerid); 
@@ -2191,7 +2191,7 @@ void dem2deadtolife (){
 
 void dem3deadtolife (){
     dem3.deadtime++;
-    printf("deadtime Count: %d\n", dem3.deadtime);
+    //printf("deadtime Count: %d\n", dem3.deadtime);
 
     if (dem3.deadtime >= deathtime) {
         iPauseTimer(dem3.timerid); 
@@ -2234,10 +2234,10 @@ void appendScoreToFile(const char* name, int score) {
     if (fp) {
         fprintf(fp, "%s: %d\n", name, score);
         fclose(fp);
-		printf("Score appended successfully for %s.\n", name);
+		//printf("Score appended successfully for %s.\n", name);
 
     } else {
-        printf("Error: Could not open High_Score.txt for appending.\n");
+        //printf("Error: Could not open High_Score.txt for appending.\n");
     }
 }
 
