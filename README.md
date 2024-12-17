@@ -1,4 +1,4 @@
-# Dotly Hallows: The Maze of Mayhem
+# Dotly Hallows:
 
 Step into the enchanted labyrinth of **Dotly Hallows**, a maze-based arcade adventure where magical creatures, cursed mazes, and dark secrets await. Play as Harry Potter, navigating through a maze of perilous challenges, with every turn hiding new dangers—and a deep mystery that grows with each level. It’s a race against time to collect the **Golden Snitches**, defeat the shadowy enemies, and unlock the ultimate prize. But remember, not all victories are as they seem…
 
@@ -63,9 +63,9 @@ You’re no longer in the maze. You’re standing in the **Graveyard of Little H
 
 ---
 
-## Screenshots & Demo
+## YT Video
 
-_(Add any images or demo links here)_
+
 
 ---
 
@@ -76,4 +76,4 @@ To play **Dotly Hallows**, clone the repository and follow the installation inst
 ```bash
 git clone https://github.com/yourusername/dotly-hallows.git
 cd dotly-hallows
-# Follow any setup instructions here
+#Now setup igraphics in vscode or codebloacks and run build task for DotlyHallows.cpp
