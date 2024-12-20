@@ -89,7 +89,7 @@ char str[1000]="";
 bool totalsound=true;
 
 #define MAX_ENTRIES 100
-#define MAX_DISPLAYED_SCORES 3
+#define MAX_DISPLAYED_SCORES 5
 #define MAX_LINE_LENGTH 100
 typedef struct {
     char name[MAX_LINE_LENGTH];
